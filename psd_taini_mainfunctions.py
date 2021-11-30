@@ -7,7 +7,7 @@ reformatted brain states per animal and extract data values per brain
 state and then calculate PSD averages.'''
 
 
-#all required imports 
+##all required imports 
 import pandas as pd
 import os
 import numpy as np
@@ -21,8 +21,8 @@ import re
 
 #variables that may change - required for functions
 path =  '/home/melissa/preprocessing/numpyformat'
-animal_number = 'S7070'
-channel_number = 8
+animal_number = 'S7063'
+channel_number = 4
 
 starting_times_dict = {'S7063_1': [15324481], 'S7063_2': [36959041], 
                        'S7064_1': [15324481], 'S7064_2':[36959041],
@@ -34,16 +34,28 @@ starting_times_dict = {'S7063_1': [15324481], 'S7063_2': [36959041],
                        'S7074_1': [35862289],
                        'S7075_1': [1422772],
                        'S7076_1': [17578081],
+                       'S7083_1': [17578081], 'S7083_2':[39212640],
                        'S7086_1': [12830497], 'S7086_2': [34465057],
                        'S7088_1': [18088897], 
-                       'S7091_1': [15369553], 'S7091_2': [37004112]}
+                       'S7091_1': [15369553], 'S7091_2': [37004112],
+                       'S7092_1': [15369553], 'S7092_2':[37004112],
+                       'S7094_1': [34465057], 
+                       'S7098_1': [35246305], 'S7098_2':[56880865],
+                       'S7101_1': [35246305], 'S7101_2':[56880865]}
 
-channels_dict = {'S1Tr_RIGHT': [0], 'M2_FrA_RIGHT':[1], 'M2_ant_RIGHT':[2],
-                 'M1_ant_RIGHT':[3], 'V2ML_RIGHT':[4], 'V1M_RIGHT':[5],
-                 'S1HL_S1FL_RIGHT':[6], 'V1M_LEFT':[7], 'V2ML_LEFT':[8],
-                 'S1HL_S1FL_LEFT':[9], 'M1_ant_LEFT':[10], 'M2_ant_LEFT':[11],
-                 'M2_FrA_LEFT':[12], 'S1Tr_LEFT':[13], 'EMG_RIGHT':[14],
-                 'EMG_LEFT':[15]}
+channels_dict = {'S1Tr_RIGHT': [0], 'EMG_RIGHT':[1], 'M2_FrA_RIGHT':[2],
+                 'M2_ant_RIGHT':[3],'M1_ant_RIGHT':[4], 'V2ML_RIGHT':[5],
+                 'V1M_RIGHT':[6], 'S1HL_S1FL_RIGHT':[7], 'V1M_LEFT':[8],
+                 'V2ML_LEFT':[9], 'S1HL_S1FL_LEFT':[10], 'M1_ant_LEFT':[11],
+                 'M2_ant_LEFT':[12],'M2_FrA_LEFT':[13], 'EMG_LEFT':[14],
+                 'S1Tr_LEFT':[15]}
+
+genotype_per_animal = {'S7063':['GAP'], 'S7064':['GAP'], 'S7068':['WT'],
+                        'S7069':['GAP'],'S7070':['WT'], 'S7071':['WT'],
+                        'S7072':['GAP'], 'S7074':['WT'], 'S7075':['GAP'],
+                        'S7076':['GAP'], 'S7086':['WT'], 'S7088':['GAP'],
+                        'S7091':['WT']}
+
 
 
 #load files, brainstate, starting times per animal and then do analysis together
@@ -90,17 +102,53 @@ def loading_analysis_files(path, animal_number, starting_times_dict, channel_num
         else:
             if animal_id ==starting_2:
                 time_2 = starting_times_dict[animal_id]
-                
+            
+    x = time_1[0]
+    y = time_2[0]
+    print(x,y)
+    
     global data_baseline1
     global data_baseline2
-    data_baseline1 = data[channel_number, time_1[0]:]
-    data_baseline2 = data[channel_number, time_2[0]:]
+    print(channel_number)
+    data_baseline1 = data[channel_number, x:]
+    data_baseline2 = data[channel_number, y:]
     
     return data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2
 
 
 
-loading_analysis_files(path, animal_number, starting_times_dict, channel_number)
+def loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number):
+
+    starting_1 = animal_number + '_1'
+
+    files = []
+
+    for r, d, f in os.walk(path):
+        for file in f:
+            if animal_number in file:
+                files.append(os.path.join(r, file))
+
+    for f in files:
+        print(f)
+
+    for x in files:
+        if x.endswith('npy'):
+            data = np.load(x)
+
+    for y in files:
+        if y.endswith('_1' + animal_number + '.pkl'):
+            global brain_state_1
+            brain_state_1 = pd.read_pickle(y)
+
+    for animal_id in starting_times_dict:
+        if animal_id == starting_1:
+            global time_1
+            time_1 = starting_times_dict[animal_id]
+
+    global data_baseline1
+    data_baseline1 = data[channel_number, time_1[0]:]
+
+    return data_baseline1, brain_state_1, time_1
 
 
 #the function below slices out indices from data file that correspond to 
@@ -170,6 +218,29 @@ def brainstate_times(brain_state_file, brainstate_number):
 
     return timevalues_array       
 
+'this function filters out low-frequency drifts and frequencies above 100Hz'
+def highpass(raw_data):
+    lowcut = 1
+    highcut = 100
+    order = 3
+    sampling_rate = 250.4
+    
+    'first function defines the variables for the butter bandpass to get coefficient readouts'
+    nyq = 125.2
+    low = lowcut/nyq
+    high = highcut/nyq 
+    butter_b, butter_a = signal.butter(order, [low, high], btype='band', analog = False)
+
+    print(butter_b, butter_a)
+
+    def butter_bandpass_filter(butter_b, butter_a, raw_data):
+        butter_y = signal.filtfilt(butter_b, butter_a, raw_data)
+        return butter_y
+
+    global filtered_data
+    filtered_data = butter_bandpass_filter(butter_b, butter_a, raw_data)
+
+    return filtered_data
 
 'this function extracts data values which correspond to time values from brain state file'
 'currently only one channel'
@@ -198,7 +269,7 @@ def remove_noise(extracted_datavalues):
 
     for i in range(len(extracted_datavalues)):
         for j in range(len(extracted_datavalues[i])):
-            if extracted_datavalues[i][j] >= 4000:
+            if extracted_datavalues[i][j] >= 3000:
                 channel_threshold.append(i)
             else:
                 pass
@@ -210,9 +281,12 @@ def remove_noise(extracted_datavalues):
             del[i]
         else:
             removing_duplicates.append(channel_threshold[i])
-    
+
     global channels_withoutnoise
     channels_withoutnoise = [i for j, i in enumerate(extracted_datavalues) if j not in removing_duplicates]
+
+    print(len(extracted_datavalues))
+    print(len(channels_withoutnoise))
 
     return channels_withoutnoise
 
@@ -245,21 +319,24 @@ def psd_per_channel(data_without_noise):
 
 'function below averages psd calculations per frequency and returns a PSD plot'
 
-def psd_average(psd_per_channel, frequency): 
+def psd_average(psd_per_channel,frequency, animal_number): 
     
     df_psd = pd.DataFrame(psd_per_channel)
 
     global mean_values
     mean_values = df_psd.mean(axis = 0)
 
-    plt.figure()
+    fig = plt.figure()
     plt.semilogy(frequency, mean_values)
     plt.xlabel('frequency [Hz]')
-    plt.xlim(0,60)
+    plt.xlim(0,100)
+    plt.ylim(10**-3, 10**4)
     plt.ylabel('Power spectrum')
-    plot = plt.show()
+    fig.suptitle(animal_number)
+    fig.savefig(animal_number)
+    plt.show()
 
 
-    return mean_values, plot
+    return mean_values
 
 
