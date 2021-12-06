@@ -93,7 +93,7 @@ def loading_analysis_files(path, animal_number, starting_times_dict, channel_num
     
 
     #finding start times for specific animal from start_times dictionary 
-
+    global animal_id
     for animal_id in starting_times_dict:
         if animal_id == starting_1:
             global time_1
@@ -329,11 +329,12 @@ def psd_average(psd_per_channel,frequency, animal_number):
     fig = plt.figure()
     plt.semilogy(frequency, mean_values)
     plt.xlabel('frequency [Hz]')
-    plt.xlim(0,100)
+    plt.xlim(1,100)
     plt.ylim(10**-3, 10**4)
     plt.ylabel('Power spectrum')
     fig.suptitle(animal_number)
-    fig.savefig(animal_number)
+    os.chdir('/home/melissa/psd_plots_december21')
+    fig.savefig(animal_number + animal_id)
     plt.show()
 
 

@@ -1,54 +1,80 @@
-#plot animals to look for strange artifacts
+#convert .dat files to numpy files and reformat brain states
 
+from datetime import date
 import os 
 import mne 
 import numpy as np 
-from psd_taini_mainfunctions import starting_times_dict
+import pandas as pd
 
-path =  '/home/melissa/preprocessing/numpyformat'
-animal_number = 'S7063'
+#1. function to save .dat files as numpy files 
+
+#path to file with .dat file and other required variables 
+os.chdir('/home/melissa/S7094')
+og_fn = 'TAINI_1048_S7094-B-2021_06_15-0000.dat'
+save_as = 'TAINI_S7094_BASELINE.npy'
 
 
-def plot_all_channels(path, animal_number):
-    
-    files=[]
+def dat_to_numpy(fn, saveas):
+    number_of_channels = 16
+    sample_rate = 250.4
+    display_decimation = 1
+
+    #reshape the 2D per channel data 
+    dt = 'int16'
+    data_raw = np.fromfile(fn, dtype=dt)
+    step = number_of_channels*display_decimation
+    dat_chans = [data_raw[c::step] for c in range(number_of_channels)]
+    data = np.array(dat_chans)
+    os.chdir('/home/melissa/preprocessing/numpyformat')
+    np.save(saveas, data)
+
+    return 
+
+
+#dat_to_numpy(og_fn, save_as)
+
+
+#2. Reformat brain states
+
+
+def reformat_brainstates(path):
+    #brain_1 = animal_number + '_BL1'
+    #brain_2 = animal_number + '_BL2'
+
+    animal_numbers_reformat_brainstates = ['63', '64', '68', '69', '70', '71', '72',
+                                        '74', '75', '76', '83', '86', '88', '91',
+                                        '92', '94', '96', '98', '101']
+
+    files = []
 
     for r, d, f in os.walk(path):
-            for file in f:
+        for file in f:
+            for animal_number in animal_numbers_reformat_brainstates:
                 if animal_number in file:
                     files.append(os.path.join(r, file))
 
-    print(files)
+    for f in files:
+        print(f)
 
-    for x in files:
-        if x.endswith('npy'):
-            data = np.load(x)
-    
-    global time
-    for animal_id in starting_times_dict:
-        starting_1 = animal_number + '_1'
-        if animal_id == starting_1:
-            time = starting_times_dict[animal_id]
-    
-    print(data)
+    for y in files:
+        if y.endswith('States-real samp.xls'):
+            load_file = pd.read_excel(y)
+            print(load_file)
+            #load_file.columns = (['brainstate', 'old_start_epoch', 'old_end_epoch']) #rename columns
+            #load_file.shift(1, axis = 0) #shift rows down by one
+            #load_file.loc[0] = [0, 0, 5] #add new time bin for row one
+            #load_file.astype(int) #convert float vlaues to integers
+            #load_file.drop(["old_start_epoch", "old_end_epoch"], axis=1, inplace=True) #delete columns
+            #x = len(load_file)*5
+            #z = x + 5
+            #load_file.insert(loc =1, column = 'start_epoch', value=list(range(0, x, 5)))
+            #load_file.insert(loc=2, column = 'end_epoch', value=list(range(5,z,5)))
+            
+            os.chdir('/home/melissa/brain_states')
+            #load_file.to_pickle(y)
 
-    os.chdir('/home/melissa//Documents/EEG_Coherence-master/EEG_Coherence-master/')
-    montage_name = 'standard_16grid_taini1.elc'
-    montage = mne.channels.read_custom_montage(montage_name)
-    sample_rate = 250.4
-    channel_types = ['eeg', 'eeg', 'eeg', 'eeg','eeg', 'eeg', 'eeg', 'eeg',
-                    'eeg', 'eeg', 'eeg', 'eeg','eeg', 'eeg', 'emg', 'emg']
+    return y
 
-    ch_names = ['S1Tr_RIGHT', 'M2_FrA_RIGHT', 'M2_ant_RIGHT', 'M1_ant_RIGHT', 
-                'V2ML_RIGHT', 'V1M_RIGHT', 'S1HL_S1FL_RIGHT', 'V1M_LEFT', 
-                'V2ML_LEFT','S1HL_S1FL_LEFT', 'M1_ant_LEFT', 'M2_ant_LEFT',
-                'M2_FrA_LEFT', 'S1Tr_LEFT', 'EMG_RIGHT', 'EMG_LEFT']
-    
-    ch_numbers = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-
-    info = mne.create_info(ch_names, sfreq = sample_rate, ch_types = channel_types)
- 
-    custom_raw = mne.io.RawArray(data, info)
-    print(custom_raw)
-
-    return custom_raw
+os.chdir('/home/melissa/brain_states_unformatted')
+path = '/home/melissa/brain_states_unformatted'
+reformat_brainstates(path)
