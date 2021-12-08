@@ -2,7 +2,7 @@
 
 from numpy.core.fromnumeric import mean
 from numpy.lib.function_base import average
-from psd_taini_mainfunctions import loading_analysis_files, brainstate_times, highpass, channel_data_extraction, loading_analysis_files_onebrainstate, remove_noise, psd_per_channel, psd_average
+from psd_taini_mainfunctions import loading_analysis_files, brainstate_times, highpass, channel_data_extraction, loading_analysis_files_onebrainstate, looking_for_outliers, remove_noise, psd_per_channel, psd_average
 from psd_taini_mainfunctions import starting_times_dict, channels_dict, genotype_per_animal
 
 #other required imports 
@@ -22,16 +22,19 @@ path = '/home/melissa/preprocessing/numpyformat'
 
 animal_number_two_brainstates = ['S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092', 'S7098', 'S7101']
 animal_number_one_brainstate = ['S7068', 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094']
+channel_number = 9
 
 print(len(animal_number_two_brainstates))
 print(len(animal_number_one_brainstate))
 
+'all empty lists below'
 small_dfs_two_brainstates = []
+slopegradient_intercept =[]
 
 for i in range(len(animal_number_two_brainstates)-1):
     animal_number = animal_number_two_brainstates[i]
     print(animal_number)
-    data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number=9)
+    data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number)
     REM_1_timevalues = brainstate_times(brain_state_1, 2)
     REM_2_timevalues = brainstate_times(brain_state_2, 2)
     REM_1_filtered = highpass(data_baseline1)
@@ -42,6 +45,10 @@ for i in range(len(animal_number_two_brainstates)-1):
     REM_2_withoutartifacts = remove_noise(REM_2_datavalues)
     psd_REM_1, frequency = psd_per_channel(REM_1_withoutartifacts)
     psd_REM_2, frequency = psd_per_channel(REM_2_withoutartifacts)
+    intercept_slope = looking_for_outliers(psd_REM_1, frequency)
+    slopegradient_intercept.append([animal_number, intercept_slope])
+    intercept_slope_2 = looking_for_outliers(psd_REM_2, frequency)
+    slopegradient_intercept.append([animal_number, intercept_slope_2])
     psd_average_1 = psd_average(psd_REM_1, frequency, animal_number)
     list_mean_1 = list(psd_average_1)
     print(list_mean_1)
@@ -82,7 +89,7 @@ for i in range(len(animal_number_two_brainstates)-1):
 
 #last animal not included in loop
 animal_number = animal_number_two_brainstates[-1]
-data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number=9)
+data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number)
 REM_1_timevalues = brainstate_times(brain_state_1, 2)
 REM_2_timevalues = brainstate_times(brain_state_2, 2)
 REM_1_filtered = highpass(data_baseline1)
@@ -93,6 +100,10 @@ REM_1_withoutartifacts = remove_noise(REM_1_datavalues)
 REM_2_withoutartifacts = remove_noise(REM_2_datavalues)
 psd_REM_1, frequency = psd_per_channel(REM_1_withoutartifacts)
 psd_REM_2, frequency = psd_per_channel(REM_2_withoutartifacts)
+intercept_slope = looking_for_outliers(psd_REM_1, frequency)
+slopegradient_intercept.append([animal_number, intercept_slope])
+intercept_slope_2 = looking_for_outliers(psd_REM_2, frequency)
+slopegradient_intercept.append([animal_number, intercept_slope_2])
 psd_average_1 = psd_average(psd_REM_1, frequency, animal_number)
 list_mean_1 = list(psd_average_1)
 psd_average_2 = psd_average(psd_REM_2, frequency, animal_number)
@@ -131,12 +142,14 @@ small_dfs_one_brainstate = []
 
 for i in range(len(animal_number_one_brainstate)-1):
     animal_number = animal_number_one_brainstate[i]
-    data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number=9)
+    data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number)
     REM_1_timevalues = brainstate_times(brain_state_1, 2)
     REM_1_filtered = highpass(data_baseline1)
     REM_1_datavalues = channel_data_extraction(REM_1_timevalues, REM_1_filtered)
     REM_1_withoutartifacts = remove_noise(REM_1_datavalues)
     psd_REM_1, frequency = psd_per_channel(REM_1_withoutartifacts)
+    intercept_slope = looking_for_outliers(psd_REM_1, frequency)
+    slopegradient_intercept.append([animal_number, intercept_slope])
     psd_average_1 = psd_average(psd_REM_1, frequency, animal_number)
     list_average_1 = list(psd_average_1)
     
@@ -158,12 +171,14 @@ for i in range(len(animal_number_one_brainstate)-1):
 
 animal_number = animal_number_one_brainstate[-1]
 print(animal_number)
-data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number=9)
+data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number)
 REM_1_timevalues = brainstate_times(brain_state_1, 2)
 REM_1_filtered = highpass(data_baseline1)
 REM_1_datavalues = channel_data_extraction(REM_1_timevalues, REM_1_filtered)
 REM_1_withoutartifacts = remove_noise(REM_1_datavalues)
 psd_REM_1, frequency = psd_per_channel(REM_1_withoutartifacts)
+intercept_slope = looking_for_outliers(psd_REM_1, frequency)
+slopegradient_intercept.append([animal_number, intercept_slope])
 psd_average_1 = psd_average(psd_REM_1, frequency, animal_number)
 list_average_1 = list(psd_average_1)
 
@@ -185,7 +200,9 @@ small_dfs_one_brainstate.append(df_lastvalue)
 '''checking last df is the last animal in list'''
 print(len(small_dfs_one_brainstate))
 print(len(small_dfs_two_brainstates))
-
+print(slopegradient_intercept)
+os.chdir('/home/melissa/preprocessing')
+numpy.save(channel_number + 'channel_number_slope_intercepts_gradient', slopegradient_intercept)
 
 large_dfs_two_brainstates = pd.concat([small_dfs_two_brainstates[0], small_dfs_two_brainstates[1],
                                       small_dfs_two_brainstates[2], small_dfs_two_brainstates[3],

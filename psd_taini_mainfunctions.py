@@ -53,8 +53,9 @@ channels_dict = {'S1Tr_RIGHT': [0], 'EMG_RIGHT':[1], 'M2_FrA_RIGHT':[2],
 genotype_per_animal = {'S7063':['GAP'], 'S7064':['GAP'], 'S7068':['WT'],
                         'S7069':['GAP'],'S7070':['WT'], 'S7071':['WT'],
                         'S7072':['GAP'], 'S7074':['WT'], 'S7075':['GAP'],
-                        'S7076':['GAP'], 'S7086':['WT'], 'S7088':['GAP'],
-                        'S7091':['WT']}
+                        'S7076':['GAP'], 'S7083': ['WT'], 'S7086':['WT'], 
+                        'S7088':['GAP'], 'S7091':['WT'], 'S7092':['GAP'],
+                        'S7094':['GAP'], 'S7098':['WT'], 'S7101':['WT']}
 
 
 
@@ -316,6 +317,28 @@ def psd_per_channel(data_without_noise):
     
     return psd, frequency
 
+'function below calculates line of best fit for psd of each epoch and returns the average slope intercept and gradient'
+def looking_for_outliers(psd, frequency):
+
+    global slope_list
+    global intercept_list
+    slope_list = []
+    intercept_list = []
+
+    for i in range(len(psd)):
+        plt.semilogy(frequency, psd[i])
+        slope, intercept = np.polyfit(frequency, psd[i], 1)
+        slope_list.append(slope)
+        intercept_list.append(intercept)
+
+    global average_slope
+    global average_intercept
+
+    average_slope = sum(slope_list)/len(slope_list)
+    average_intercept = sum(intercept_list)/len(intercept_list)
+
+    return average_slope, average_intercept
+    
 
 'function below averages psd calculations per frequency and returns a PSD plot'
 
