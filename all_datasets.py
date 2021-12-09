@@ -175,36 +175,37 @@ for i in range(len(animal_number_one_brainstate)-1):
 
         df_2 = pd.DataFrame(data = results)
         small_dfs_one_brainstate.append(df_2)    
-animal_number = [i+1]
+    animal_number = [i+1]
 
 
 animal_number = animal_number_one_brainstate[-1]
 print(animal_number)
-data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number)
-REM_1_timevalues = brainstate_times(brain_state_1, 2)
-REM_1_filtered = highpass(data_baseline1)
-REM_1_datavalues = channel_data_extraction(REM_1_timevalues, REM_1_filtered)
-REM_1_withoutartifacts = remove_noise(REM_1_datavalues)
-psd_REM_1, frequency = psd_per_channel(REM_1_withoutartifacts)
-intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_REM_1, frequency)
-#slopegradient_intercept.append([animal_number, intercept_slope])
-psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd_REM_1)
-psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
-list_average_1 = list(psd_average_1)
+for i in len(channel_number):
+    data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number[i])
+    timevalues = brainstate_times(brain_state_1, 2)
+    filtered = highpass(data_baseline1)
+    datavalues = channel_data_extraction(timevalues, filtered)
+    withoutartifacts = remove_noise(datavalues)
+    psd_1, frequency = psd_per_channel(withoutartifacts)
+    intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_1, frequency)
+    #slopegradient_intercept.append([animal_number, intercept_slope])
+    psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd_1)
+    psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
+    list_average_1 = list(psd_average_1)
 
-for x in genotype_per_animal:
-    if x == animal_number:
-        genotype = genotype_per_animal[x]
-print(genotype)
+    for x in genotype_per_animal:
+        if x == animal_number:
+            genotype = genotype_per_animal[x]
+    print(genotype)
 
-sleepstate = ['REM']
-recordingtype = ['baseline'] 
-results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
-'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-'Frequency': frequency, 'Power_1': list_mean_1}
+    sleepstate = ['REM']
+    recordingtype = ['baseline'] 
+    results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
+    'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
+    'Frequency': frequency, 'Power_1': list_mean_1}
 
-df_lastvalue = pd.DataFrame(data = results)
-small_dfs_one_brainstate.append(df_lastvalue)
+    df_lastvalue = pd.DataFrame(data = results)
+    small_dfs_one_brainstate.append(df_lastvalue)
 
 
 '''checking last df is the last animal in list'''
