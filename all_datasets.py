@@ -22,7 +22,7 @@ path = '/home/melissa/preprocessing/numpyformat'
 
 animal_number_two_brainstates = [ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092'] #S7101
 animal_number_one_brainstate = ['S7068', 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094', 'S7098']
-channel_number = 9
+channel_number = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
 print(len(animal_number_two_brainstates))
 print(len(animal_number_one_brainstate))
@@ -31,33 +31,91 @@ print(len(animal_number_one_brainstate))
 small_dfs_two_brainstates = []
 slopegradient_intercept =[]
 
+'loop below calculates psd average per channel for every number in two_brainstates list'
 for i in range(len(animal_number_two_brainstates)-1):
     animal_number = animal_number_two_brainstates[i]
     print(animal_number)
-    data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number)
-    REM_1_timevalues = brainstate_times(brain_state_1, 2)
-    REM_2_timevalues = brainstate_times(brain_state_2, 2)
-    REM_1_filtered = highpass(data_baseline1)
-    REM_2_filtered = highpass(data_baseline2)
-    REM_1_datavalues = channel_data_extraction(REM_1_timevalues, REM_1_filtered)
-    REM_2_datavalues = channel_data_extraction(REM_2_timevalues, REM_2_filtered)
-    REM_1_withoutartifacts = remove_noise(REM_1_datavalues)
-    REM_2_withoutartifacts = remove_noise(REM_2_datavalues)
-    psd_REM_1, frequency = psd_per_channel(REM_1_withoutartifacts)
-    psd_REM_2, frequency = psd_per_channel(REM_2_withoutartifacts)
-    intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_REM_1, frequency)
+    for i in range(len(channel_number)):
+        data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number[i])
+        timevalues_1 = brainstate_times(brain_state_1, 2)
+        timevalues_2 = brainstate_times(brain_state_2, 2)
+        filtered_1 = highpass(data_baseline1)
+        filtered_2 = highpass(data_baseline2)
+        datavalues_1 = channel_data_extraction(timevalues_1, filtered_1)
+        datavalues_2 = channel_data_extraction(timevalues_2, filtered_2)
+        withoutartifacts_1 = remove_noise(datavalues_1)
+        withoutartifacts_2 = remove_noise(datavalues_2)
+        psd_1, frequency = psd_per_channel(withoutartifacts_1)
+        psd_2, frequency = psd_per_channel(withoutartifacts_2)
+        intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_1, frequency)
+        #slopegradient_intercept.append([animal_number, intercept_slope])
+        intercept_epochs_remove_2, slope_epochs_remove_2 = looking_for_outliers(psd_2, frequency)
+        #slopegradient_intercept.append([animal_number, intercept_slope_2])
+        psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd_1)
+        psd_cleaned_2 = remove_epochs(intercept_epochs_remove_2, slope_epochs_remove_2, psd_2)
+        psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
+        list_mean_1 = list(psd_average_1)
+        print(list_mean_1)
+        psd_average_2 = psd_average(psd_cleaned_2, frequency, animal_number)
+        list_mean_2 = list(psd_average_2)
+    
+     
+        for x in genotype_per_animal:
+            if x == animal_number:
+                genotype = genotype_per_animal[x]
+        print(genotype)
+
+        sleepstate = ['REM']
+        recordingtype = ['baseline']
+        results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
+        'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
+        'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
+
+        df_1 = pd.DataFrame(data = results)
+        col = df_1.loc[:, "Power_1":"Power_2"]
+        df_1["Power"] = col.mean(axis = 1)
+        average_p = df_1.loc[:, "Power"]
+        print(average_p)
+        df_1.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
+        fig = plt.figure()
+        plt.semilogy(frequency, average_p)
+        plt.xlabel('frequency [Hz]')
+        plt.xlim(1,100)
+        plt.ylim(10**-3, 10**4)
+        plt.ylabel('Power spectrum')
+        fig.suptitle(animal_number)
+        os.chdir('/home/melissa/psd_plots_december21')
+        fig.savefig(animal_number + 'average')
+        plt.show()
+        small_dfs_two_brainstates.append(df_1)
+        animal_number = [i+1]
+    
+
+#last animal not included in loop
+animal_number = animal_number_two_brainstates[-1]
+for i in len(channel_number):
+    data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number[i])
+    timevalues_1 = brainstate_times(brain_state_1, 2)
+    timevalues_2 = brainstate_times(brain_state_2, 2)
+    filtered_1 = highpass(data_baseline1)
+    filtered_2 = highpass(data_baseline2)
+    datavalues_1 = channel_data_extraction(timevalues_1, filtered_1)
+    datavalues_2 = channel_data_extraction(timevalues_2, filtered_2)
+    withoutartifacts_1 = remove_noise(datavalues_1)
+    withoutartifacts_2 = remove_noise(datavalues_2)
+    psd_1, frequency = psd_per_channel(withoutartifacts_1)
+    psd_2, frequency = psd_per_channel(withoutartifacts_2)
+    intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_1, frequency)
     #slopegradient_intercept.append([animal_number, intercept_slope])
-    intercept_epochs_remove_2, slope_epochs_remove_2 = looking_for_outliers(psd_REM_2, frequency)
+    intercept_epochs_remove_2, slope_epochs_remove_2 = looking_for_outliers(psd_2, frequency)
     #slopegradient_intercept.append([animal_number, intercept_slope_2])
-    psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd_REM_1)
-    psd_cleaned_2 = remove_epochs(intercept_epochs_remove_2, slope_epochs_remove_2, psd_REM_2)
+    psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd_1)
+    psd_cleaned_2 = remove_epochs(intercept_epochs_remove_2, slope_epochs_remove_2, psd_2)
     psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
     list_mean_1 = list(psd_average_1)
-    print(list_mean_1)
     psd_average_2 = psd_average(psd_cleaned_2, frequency, animal_number)
     list_mean_2 = list(psd_average_2)
     
-     
     for x in genotype_per_animal:
         if x == animal_number:
             genotype = genotype_per_animal[x]
@@ -66,112 +124,58 @@ for i in range(len(animal_number_two_brainstates)-1):
     sleepstate = ['REM']
     recordingtype = ['baseline']
     results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
-    'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-    'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
+           'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
+           'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
 
-    df_1 = pd.DataFrame(data = results)
-    col = df_1.loc[:, "Power_1":"Power_2"]
-    df_1["Power"] = col.mean(axis = 1)
-    average_p = df_1.loc[:, "Power"]
-    print(average_p)
-    df_1.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
+    df_lastvalue = pd.DataFrame(data = results)
+    col = df_lastvalue.loc[:, "Power_1":"Power_2"]
+    df_lastvalue["Power"] = col.mean(axis = 1)
+    average_p = df_lastvalue.loc[:, "Power"]
+    df_lastvalue.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
     fig = plt.figure()
     plt.semilogy(frequency, average_p)
     plt.xlabel('frequency [Hz]')
-    plt.xlim(1,100)
+    plt.xlim(0,100)
     plt.ylim(10**-3, 10**4)
     plt.ylabel('Power spectrum')
     fig.suptitle(animal_number)
     os.chdir('/home/melissa/psd_plots_december21')
     fig.savefig(animal_number + 'average')
     plt.show()
-    small_dfs_two_brainstates.append(df_1)
-    animal_number = [i+1]
-    
-
-#last animal not included in loop
-animal_number = animal_number_two_brainstates[-1]
-data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number)
-REM_1_timevalues = brainstate_times(brain_state_1, 2)
-REM_2_timevalues = brainstate_times(brain_state_2, 2)
-REM_1_filtered = highpass(data_baseline1)
-REM_2_filtered = highpass(data_baseline2)
-REM_1_datavalues = channel_data_extraction(REM_1_timevalues, REM_1_filtered)
-REM_2_datavalues = channel_data_extraction(REM_2_timevalues, REM_2_filtered)
-REM_1_withoutartifacts = remove_noise(REM_1_datavalues)
-REM_2_withoutartifacts = remove_noise(REM_2_datavalues)
-psd_REM_1, frequency = psd_per_channel(REM_1_withoutartifacts)
-psd_REM_2, frequency = psd_per_channel(REM_2_withoutartifacts)
-intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_REM_1, frequency)
-#slopegradient_intercept.append([animal_number, intercept_slope])
-intercept_epochs_remove_2, slope_epochs_remove_2 = looking_for_outliers(psd_REM_2, frequency)
-#slopegradient_intercept.append([animal_number, intercept_slope_2])
-psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd_REM_1)
-psd_cleaned_2 = remove_epochs(intercept_epochs_remove_2, slope_epochs_remove_2, psd_REM_2)
-psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
-list_mean_1 = list(psd_average_1)
-psd_average_2 = psd_average(psd_cleaned_2, frequency, animal_number)
-list_mean_2 = list(psd_average_2)
-    
-for x in genotype_per_animal:
-    if x == animal_number:
-        genotype = genotype_per_animal[x]
-print(genotype)
-
-sleepstate = ['REM']
-recordingtype = ['baseline']
-results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
-           'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-           'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
-
-df_lastvalue = pd.DataFrame(data = results)
-col = df_lastvalue.loc[:, "Power_1":"Power_2"]
-df_lastvalue["Power"] = col.mean(axis = 1)
-average_p = df_lastvalue.loc[:, "Power"]
-df_lastvalue.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
-fig = plt.figure()
-plt.semilogy(frequency, average_p)
-plt.xlabel('frequency [Hz]')
-plt.xlim(0,100)
-plt.ylim(10**-3, 10**4)
-plt.ylabel('Power spectrum')
-fig.suptitle(animal_number)
-os.chdir('/home/melissa/psd_plots_december21')
-fig.savefig(animal_number + 'average')
-plt.show()
-small_dfs_two_brainstates.append(df_lastvalue)
+    small_dfs_two_brainstates.append(df_lastvalue)
 
 
 small_dfs_one_brainstate = []
 
 for i in range(len(animal_number_one_brainstate)-1):
     animal_number = animal_number_one_brainstate[i]
-    data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number)
-    REM_1_timevalues = brainstate_times(brain_state_1, 2)
-    REM_1_filtered = highpass(data_baseline1)
-    REM_1_datavalues = channel_data_extraction(REM_1_timevalues, REM_1_filtered)
-    REM_1_withoutartifacts = remove_noise(REM_1_datavalues)
-    psd_REM_1, frequency = psd_per_channel(REM_1_withoutartifacts)
-    intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_REM_1, frequency)
-    #slopegradient_intercept.append([animal_number, intercept_slope])
-    psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd_REM_1)
-    psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
-    list_average_1 = list(psd_average_1)
+    for i in len(channel_number):
+        data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number)
+        timevalues = brainstate_times(brain_state_1, 2)
+        filtered = highpass(data_baseline1)
+        datavalues = channel_data_extraction(timevalues, filtered)
+        withoutartifacts = remove_noise(datavalues)
+        psd, frequency = psd_per_channel(withoutartifacts)
+        intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd, frequency)
+        #slopegradient_intercept.append([animal_number, intercept_slope])
+        psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
+        psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
+        list_average_1 = list(psd_average_1)
     
-    for x in genotype_per_animal:
-        if x == animal_number:
-            genotype = genotype_per_animal[x]
-    print(genotype)
+        for x in genotype_per_animal:
+            if x == animal_number:
+                genotype = genotype_per_animal[x]
+        print(genotype)
 
-    sleepstate = ['REM']
-    recordingtype = ['baseline']
-    results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
-    'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-    'Frequency': frequency, 'Power_1': list_mean_1}
+        sleepstate = ['REM']
+        recordingtype = ['baseline']
+        results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
+        'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
+        'Frequency': frequency, 'Power_1': list_mean_1}
 
-    df_2 = pd.DataFrame(data = results)
-    small_dfs_one_brainstate.append(df_2)
-    animal_number = [i+1]
+        df_2 = pd.DataFrame(data = results)
+        small_dfs_one_brainstate.append(df_2)    
+animal_number = [i+1]
 
 
 animal_number = animal_number_one_brainstate[-1]
