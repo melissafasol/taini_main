@@ -2,7 +2,8 @@
 
 from numpy.core.fromnumeric import mean
 from numpy.lib.function_base import average
-from psd_taini_mainfunctions import loading_analysis_files, brainstate_times, highpass, channel_data_extraction, loading_analysis_files_onebrainstate, looking_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
+from psd_taini_mainfunctions import loading_analysis_files, brainstate_times, highpass
+from psd_taini_mainfunctions import channel_data_extraction, loading_analysis_files_onebrainstate, looking_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
 from psd_taini_mainfunctions import starting_times_dict, channels_dict, genotype_per_animal
 
 #other required imports 
@@ -67,8 +68,8 @@ for i in range(len(animal_number_two_brainstates)-1):
 
         sleepstate = ['REM']
         recordingtype = ['baseline']
-        results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
-        'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
+        results = {'Animal_Number':[animal_number]*627, 'Channel_Number': channel_number[i]*627,
+        'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
         'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
 
         df_1 = pd.DataFrame(data = results)
@@ -211,9 +212,16 @@ for i in len(channel_number):
 '''checking last df is the last animal in list'''
 print(len(small_dfs_one_brainstate))
 print(len(small_dfs_two_brainstates))
-print(slopegradient_intercept)
-os.chdir('/home/melissa/preprocessing')
-numpy.save('9_slope_intercepts_gradient', slopegradient_intercept)
+
+data_1 = pd.DataFrame(small_dfs_one_brainstate)
+data_2 = pd.DataFrame(small_dfs_two_brainstates)
+data_1.head()
+data_2.head()
+
+os.chdir('/home/melissa/all_taini_melissa/')
+data_1.to_pickle('one_brainstate.pkl')
+data_2.to_pickle('two_brainstate.pkl')
+
 
 large_dfs_two_brainstates = pd.concat([small_dfs_two_brainstates[0], small_dfs_two_brainstates[1],
                                       small_dfs_two_brainstates[2], small_dfs_two_brainstates[3],
