@@ -88,7 +88,7 @@ for i in range(len(animal_number_two_brainstates)-1):
         fig.savefig(animal_number + 'average')
         plt.show()
         small_dfs_two_brainstates.append(df_1)
-        animal_number = [i+1]
+    animal_number = [i+1]
     
 
 #last animal not included in loop
