@@ -124,8 +124,8 @@ for i in len(channel_number):
 
     sleepstate = ['REM']
     recordingtype = ['baseline']
-    results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
-           'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
+    results = {'Animal_Number':[animal_number]*627, 'Channel_Number': channel_number[i],
+             'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
            'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
 
     df_lastvalue = pd.DataFrame(data = results)
@@ -170,9 +170,9 @@ for i in range(len(animal_number_one_brainstate)-1):
 
         sleepstate = ['REM']
         recordingtype = ['baseline']
-        results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
-        'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-        'Frequency': frequency, 'Power_1': list_mean_1}
+        results = {'Animal_Number':[animal_number]*627, 'Channel_Number': channel_number[i]*627,
+        'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
+        'Frequency': frequency, 'Power': list_mean_1}
 
         df_2 = pd.DataFrame(data = results)
         small_dfs_one_brainstate.append(df_2)    
@@ -201,9 +201,9 @@ for i in len(channel_number):
 
     sleepstate = ['REM']
     recordingtype = ['baseline'] 
-    results = {'Animal_Number':[animal_number]*627, 'Genotype':genotype*627, 
-    'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-    'Frequency': frequency, 'Power_1': list_mean_1}
+    results = {'Animal_Number':[animal_number]*627, 'Channel_Number' : channel_number[i]*627,
+     'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
+    'Frequency': frequency, 'Power': list_mean_1}
 
     df_lastvalue = pd.DataFrame(data = results)
     small_dfs_one_brainstate.append(df_lastvalue)
@@ -219,27 +219,8 @@ data_1.head()
 data_2.head()
 
 os.chdir('/home/melissa/all_taini_melissa/')
-data_1.to_pickle('one_brainstate.pkl')
-data_2.to_pickle('two_brainstate.pkl')
-
-
-large_dfs_two_brainstates = pd.concat([small_dfs_two_brainstates[0], small_dfs_two_brainstates[1],
-                                      small_dfs_two_brainstates[2], small_dfs_two_brainstates[3],
-                                      small_dfs_two_brainstates[4], small_dfs_two_brainstates[5],
-                                      small_dfs_two_brainstates[6], small_dfs_two_brainstates[7],
-                                      small_dfs_two_brainstates[8], small_dfs_two_brainstates[9],
-                                      small_dfs_two_brainstates[10]], ignore_index=True)
- 
-
-large_dfs_one_brainstate = pd.concat([small_dfs_one_brainstate[0], small_dfs_one_brainstate[1],
-                                    small_dfs_one_brainstate[2], small_dfs_one_brainstate[3],
-                                    small_dfs_one_brainstate[4], small_dfs_one_brainstate[5],
-                                    small_dfs_one_brainstate[6]],ignore_index=True)
-
-os.chdir('/home/melissa/all_taini_melissa/')
-large_dfs_one_brainstate.to_pickle('one_mean_REM.pkl')
-large_dfs_two_brainstates.to_pickle('two_mean_REM.pkl')
-
+data_1.to_pickle('one_brainstate_REM.pkl')
+data_2.to_pickle('two_brainstate_REM.pkl')
 
 
 
