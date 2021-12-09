@@ -337,14 +337,47 @@ def looking_for_outliers(psd, frequency):
     average_slope = sum(slope_list)/len(slope_list)
     average_intercept = sum(intercept_list)/len(intercept_list)
 
-    return average_slope, average_intercept
-    
+    intercept_epochs_remove = []
+    slope_epochs_remove = []
+
+    for i, item in enumerate(intercept_list):
+        if intercept_list[i] > 8:
+            print(i)
+            intercept_epochs_remove.append(i)
+
+    for i, item in enumerate(slope_list):
+        if slope_list[i] < -0.5:
+            print(i)
+            slope_epochs_remove.append(i)
+
+    return intercept_epochs_remove, slope_epochs_remove
 
 'function below averages psd calculations per frequency and returns a PSD plot'
 
-def psd_average(psd_per_channel,frequency, animal_number): 
+def remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd):
+
+    if len(intercept_epochs_remove) > len(slope_epochs_remove):
+        for i in sorted(intercept_epochs_remove, reverse=True):
+            del psd[i]
+    else:
+        for i in sorted(slope_epochs_remove, reverse=True):
+            del psd[i]
+
+    return psd
+
+'this function checks plot of linear regression after epochs removed'
+
+def plot_lin_reg(psd, frequency):
+
+    for i in range(len(psd)):
+        plt.semilogy(frequency, psd[i])
+        slope, intercept = np.polyfit(frequency, psd[i], 1)
+
+plt.show()
+
+def psd_average(psd,frequency, animal_number): 
     
-    df_psd = pd.DataFrame(psd_per_channel)
+    df_psd = pd.DataFrame(psd)
 
     global mean_values
     mean_values = df_psd.mean(axis = 0)

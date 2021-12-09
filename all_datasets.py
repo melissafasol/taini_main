@@ -2,7 +2,7 @@
 
 from numpy.core.fromnumeric import mean
 from numpy.lib.function_base import average
-from psd_taini_mainfunctions import loading_analysis_files, brainstate_times, highpass, channel_data_extraction, loading_analysis_files_onebrainstate, looking_for_outliers, remove_noise, psd_per_channel, psd_average
+from psd_taini_mainfunctions import loading_analysis_files, brainstate_times, highpass, channel_data_extraction, loading_analysis_files_onebrainstate, looking_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
 from psd_taini_mainfunctions import starting_times_dict, channels_dict, genotype_per_animal
 
 #other required imports 
@@ -20,8 +20,8 @@ from pandas import ExcelWriter
 
 path = '/home/melissa/preprocessing/numpyformat'
 
-animal_number_two_brainstates = ['S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092', 'S7098', 'S7101']
-animal_number_one_brainstate = ['S7068', 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094']
+animal_number_two_brainstates = [ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092'] #S7101
+animal_number_one_brainstate = ['S7068', 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094', 'S7098']
 channel_number = 9
 
 print(len(animal_number_two_brainstates))
@@ -45,14 +45,16 @@ for i in range(len(animal_number_two_brainstates)-1):
     REM_2_withoutartifacts = remove_noise(REM_2_datavalues)
     psd_REM_1, frequency = psd_per_channel(REM_1_withoutartifacts)
     psd_REM_2, frequency = psd_per_channel(REM_2_withoutartifacts)
-    intercept_slope = looking_for_outliers(psd_REM_1, frequency)
-    slopegradient_intercept.append([animal_number, intercept_slope])
-    intercept_slope_2 = looking_for_outliers(psd_REM_2, frequency)
-    slopegradient_intercept.append([animal_number, intercept_slope_2])
-    psd_average_1 = psd_average(psd_REM_1, frequency, animal_number)
+    intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_REM_1, frequency)
+    #slopegradient_intercept.append([animal_number, intercept_slope])
+    intercept_epochs_remove_2, slope_epochs_remove_2 = looking_for_outliers(psd_REM_2, frequency)
+    #slopegradient_intercept.append([animal_number, intercept_slope_2])
+    psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd_REM_1)
+    psd_cleaned_2 = remove_epochs(intercept_epochs_remove_2, slope_epochs_remove_2, psd_REM_2)
+    psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
     list_mean_1 = list(psd_average_1)
     print(list_mean_1)
-    psd_average_2 = psd_average(psd_REM_2, frequency, animal_number)
+    psd_average_2 = psd_average(psd_cleaned_2, frequency, animal_number)
     list_mean_2 = list(psd_average_2)
     
      
@@ -202,7 +204,7 @@ print(len(small_dfs_one_brainstate))
 print(len(small_dfs_two_brainstates))
 print(slopegradient_intercept)
 os.chdir('/home/melissa/preprocessing')
-numpy.save(channel_number + 'channel_number_slope_intercepts_gradient', slopegradient_intercept)
+numpy.save('9_slope_intercepts_gradient', slopegradient_intercept)
 
 large_dfs_two_brainstates = pd.concat([small_dfs_two_brainstates[0], small_dfs_two_brainstates[1],
                                       small_dfs_two_brainstates[2], small_dfs_two_brainstates[3],
