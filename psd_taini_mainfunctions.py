@@ -390,8 +390,8 @@ def psd_average(psd,frequency, animal_number):
     plt.ylabel('Power spectrum')
     fig.suptitle(animal_number)
     os.chdir('/home/melissa/psd_plots_december21')
-    fig.savefig(animal_number + animal_id)
-    plt.show()
+    #fig.savefig(animal_number + animal_id)
+    #plt.show()
 
 
     return mean_values

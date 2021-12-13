@@ -78,23 +78,23 @@ for i in range(len(animal_number_two_brainstates)-1):
         average_p = df_1.loc[:, "Power"]
         print(average_p)
         df_1.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
-        fig = plt.figure()
-        plt.semilogy(frequency, average_p)
-        plt.xlabel('frequency [Hz]')
-        plt.xlim(1,100)
-        plt.ylim(10**-3, 10**4)
-        plt.ylabel('Power spectrum')
-        fig.suptitle(animal_number)
+        #fig = plt.figure()
+        #plt.semilogy(frequency, average_p)
+        #plt.xlabel('frequency [Hz]')
+        #plt.xlim(1,100)
+        #plt.ylim(10**-3, 10**4)
+        #plt.ylabel('Power spectrum')
+        #fig.suptitle(animal_number)
         os.chdir('/home/melissa/psd_plots_december21')
-        fig.savefig(animal_number + 'average')
-        plt.show()
+        #fig.savefig(animal_number + 'average')
+        #plt.show()
         small_dfs_two_brainstates.append(df_1)
     animal_number = [i+1]
     
 
 #last animal not included in loop
 animal_number = animal_number_two_brainstates[-1]
-for i in len(channel_number):
+for i in range(len(channel_number)):
     data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number[i])
     timevalues_1 = brainstate_times(brain_state_1, 2)
     timevalues_2 = brainstate_times(brain_state_2, 2)
@@ -133,24 +133,29 @@ for i in len(channel_number):
     df_lastvalue["Power"] = col.mean(axis = 1)
     average_p = df_lastvalue.loc[:, "Power"]
     df_lastvalue.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
-    fig = plt.figure()
-    plt.semilogy(frequency, average_p)
-    plt.xlabel('frequency [Hz]')
-    plt.xlim(0,100)
-    plt.ylim(10**-3, 10**4)
-    plt.ylabel('Power spectrum')
-    fig.suptitle(animal_number)
+    #fig = plt.figure()
+    #plt.semilogy(frequency, average_p)
+    #plt.xlabel('frequency [Hz]')
+    #plt.xlim(0,100)
+    #plt.ylim(10**-3, 10**4)
+    #plt.ylabel('Power spectrum')
+    #fig.suptitle(animal_number)
     os.chdir('/home/melissa/psd_plots_december21')
-    fig.savefig(animal_number + 'average')
-    plt.show()
+    #fig.savefig(animal_number + 'average')
+    #plt.show()
     small_dfs_two_brainstates.append(df_lastvalue)
+
+two_brainstate_REM = numpy.asarray(small_dfs_two_brainstates)
+
+os.chdir('/home/melissa/all_taini_melissa/')
+numpy.save('two_brainstate_REM', two_brainstate_REM)
 
 
 small_dfs_one_brainstate = []
 
 for i in range(len(animal_number_one_brainstate)-1):
     animal_number = animal_number_one_brainstate[i]
-    for i in len(channel_number):
+    for i in range(len(channel_number)):
         data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number)
         timevalues = brainstate_times(brain_state_1, 2)
         filtered = highpass(data_baseline1)
@@ -172,7 +177,7 @@ for i in range(len(animal_number_one_brainstate)-1):
         recordingtype = ['baseline']
         results = {'Animal_Number':[animal_number]*627, 'Channel_Number': channel_number[i]*627,
         'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-        'Frequency': frequency, 'Power': list_mean_1}
+        'Frequency': frequency, 'Power': list_average_1}
 
         df_2 = pd.DataFrame(data = results)
         small_dfs_one_brainstate.append(df_2)    
@@ -181,7 +186,7 @@ for i in range(len(animal_number_one_brainstate)-1):
 
 animal_number = animal_number_one_brainstate[-1]
 print(animal_number)
-for i in len(channel_number):
+for i in range(len(channel_number)):
     data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number[i])
     timevalues = brainstate_times(brain_state_1, 2)
     filtered = highpass(data_baseline1)
@@ -203,7 +208,7 @@ for i in len(channel_number):
     recordingtype = ['baseline'] 
     results = {'Animal_Number':[animal_number]*627, 'Channel_Number' : channel_number[i]*627,
      'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-    'Frequency': frequency, 'Power': list_mean_1}
+    'Frequency': frequency, 'Power': list_average_1}
 
     df_lastvalue = pd.DataFrame(data = results)
     small_dfs_one_brainstate.append(df_lastvalue)
@@ -213,14 +218,10 @@ for i in len(channel_number):
 print(len(small_dfs_one_brainstate))
 print(len(small_dfs_two_brainstates))
 
-data_1 = pd.DataFrame(small_dfs_one_brainstate)
-data_2 = pd.DataFrame(small_dfs_two_brainstates)
-data_1.head()
-data_2.head()
+one_brainstate_REM = numpy.asarray(small_dfs_one_brainstate)
 
 os.chdir('/home/melissa/all_taini_melissa/')
-data_1.to_pickle('one_brainstate_REM.pkl')
-data_2.to_pickle('two_brainstate_REM.pkl')
+numpy.save('one_brainstate_REM', one_brainstate_REM)
 
 
 
