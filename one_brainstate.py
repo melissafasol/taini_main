@@ -96,7 +96,5 @@ print(len(small_dfs_one_brainstate))
 data_1 = pd.DataFrame(small_dfs_one_brainstate)
 data_1.head()
 
-os.chdir('/home/melissa/all_taini_melissa/')
-data_1.to_pickle('one_brainstate_REM.pkl')
 
 

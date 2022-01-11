@@ -21,7 +21,7 @@ from pandas import ExcelWriter
 
 path = '/home/melissa/preprocessing/numpyformat'
 
-animal_number_two_brainstates = [ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092'] #S7101
+animal_number_two_brainstates = [ 'S7063', 'S7064'] #S7101 , //'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092' 
 animal_number_one_brainstate = ['S7068', 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094', 'S7098']
 channel_number = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
@@ -31,6 +31,8 @@ print(len(animal_number_one_brainstate))
 'all empty lists below'
 small_dfs_two_brainstates = []
 slopegradient_intercept =[]
+
+
 
 'loop below calculates psd average per channel for every number in two_brainstates list'
 for i in range(len(animal_number_two_brainstates)-1):
@@ -68,10 +70,10 @@ for i in range(len(animal_number_two_brainstates)-1):
 
         sleepstate = ['REM']
         recordingtype = ['baseline']
-        results = {'Animal_Number':[animal_number]*627, 'Channel_Number': channel_number[i]*627,
+        results_channel_number = [channel_number[i]]
+        results = {'Animal_Number':[animal_number]*627, 'Channel_Number': results_channel_number*627,
         'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
         'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
-
         df_1 = pd.DataFrame(data = results)
         col = df_1.loc[:, "Power_1":"Power_2"]
         df_1["Power"] = col.mean(axis = 1)
@@ -124,8 +126,9 @@ for i in range(len(channel_number)):
 
     sleepstate = ['REM']
     recordingtype = ['baseline']
-    results = {'Animal_Number':[animal_number]*627, 'Channel_Number': channel_number[i],
-             'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
+    results_channel_number = [channel_number[i]]
+    results = {'Animal_Number':[animal_number]*627, 'Channel_Number': results_channel_number*627,
+     'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
            'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
 
     df_lastvalue = pd.DataFrame(data = results)
@@ -145,11 +148,12 @@ for i in range(len(channel_number)):
     #plt.show()
     small_dfs_two_brainstates.append(df_lastvalue)
 
-two_brainstate_REM = numpy.asarray(small_dfs_two_brainstates)
-
 os.chdir('/home/melissa/all_taini_melissa/')
-numpy.save('two_brainstate_REM', two_brainstate_REM)
 
+
+merged_two_brainstates = pd.concat(small_dfs_two_brainstates)
+print(merged_two_brainstates)
+merged_two_brainstates.to_csv('allchannels_2_brainstates.csv', index = True)
 
 small_dfs_one_brainstate = []
 
@@ -222,8 +226,5 @@ one_brainstate_REM = numpy.asarray(small_dfs_one_brainstate)
 
 os.chdir('/home/melissa/all_taini_melissa/')
 numpy.save('one_brainstate_REM', one_brainstate_REM)
-
-
-
 
 
