@@ -19,11 +19,11 @@ import re
 import statistics
 from pandas import ExcelWriter
 
-path = '/home/melissa/preprocessing/numpyformat'
+path = '/home/melissa/preprocessing/numpyformat_baseline'
 
-animal_number_two_brainstates = [ 'S7063', 'S7064'] #S7101 , //'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092' 
-animal_number_one_brainstate = ['S7068', 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094', 'S7098']
-channel_number = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+animal_number_two_brainstates = [ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092'] #S7101
+animal_number_one_brainstate = [ 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094', 'S7098', 'S7068']
+channel_number = [5,6,8,9]
 
 print(len(animal_number_two_brainstates))
 print(len(animal_number_one_brainstate))
@@ -40,8 +40,8 @@ for i in range(len(animal_number_two_brainstates)-1):
     print(animal_number)
     for i in range(len(channel_number)):
         data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number[i])
-        timevalues_1 = brainstate_times(brain_state_1, 2)
-        timevalues_2 = brainstate_times(brain_state_2, 2)
+        timevalues_1 = brainstate_times(brain_state_1, 0)
+        timevalues_2 = brainstate_times(brain_state_2, 0)
         filtered_1 = highpass(data_baseline1)
         filtered_2 = highpass(data_baseline2)
         datavalues_1 = channel_data_extraction(timevalues_1, filtered_1)
@@ -68,7 +68,7 @@ for i in range(len(animal_number_two_brainstates)-1):
                 genotype = genotype_per_animal[x]
         print(genotype)
 
-        sleepstate = ['REM']
+        sleepstate = ['wake']
         recordingtype = ['baseline']
         results_channel_number = [channel_number[i]]
         results = {'Animal_Number':[animal_number]*627, 'Channel_Number': results_channel_number*627,
@@ -98,8 +98,8 @@ for i in range(len(animal_number_two_brainstates)-1):
 animal_number = animal_number_two_brainstates[-1]
 for i in range(len(channel_number)):
     data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number[i])
-    timevalues_1 = brainstate_times(brain_state_1, 2)
-    timevalues_2 = brainstate_times(brain_state_2, 2)
+    timevalues_1 = brainstate_times(brain_state_1, 0)
+    timevalues_2 = brainstate_times(brain_state_2, 0)
     filtered_1 = highpass(data_baseline1)
     filtered_2 = highpass(data_baseline2)
     datavalues_1 = channel_data_extraction(timevalues_1, filtered_1)
@@ -124,7 +124,7 @@ for i in range(len(channel_number)):
             genotype = genotype_per_animal[x]
     print(genotype)
 
-    sleepstate = ['REM']
+    sleepstate = ['wake']
     recordingtype = ['baseline']
     results_channel_number = [channel_number[i]]
     results = {'Animal_Number':[animal_number]*627, 'Channel_Number': results_channel_number*627,
@@ -153,15 +153,15 @@ os.chdir('/home/melissa/all_taini_melissa/')
 
 merged_two_brainstates = pd.concat(small_dfs_two_brainstates)
 print(merged_two_brainstates)
-merged_two_brainstates.to_csv('allchannels_2_brainstates.csv', index = True)
+merged_two_brainstates.to_csv('allchannels_2_brainstates_test.csv', index = True)
 
 small_dfs_one_brainstate = []
 
 for i in range(len(animal_number_one_brainstate)-1):
     animal_number = animal_number_one_brainstate[i]
     for i in range(len(channel_number)):
-        data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number)
-        timevalues = brainstate_times(brain_state_1, 2)
+        data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number[i])
+        timevalues = brainstate_times(brain_state_1, 0)
         filtered = highpass(data_baseline1)
         datavalues = channel_data_extraction(timevalues, filtered)
         withoutartifacts = remove_noise(datavalues)
@@ -177,9 +177,10 @@ for i in range(len(animal_number_one_brainstate)-1):
                 genotype = genotype_per_animal[x]
         print(genotype)
 
-        sleepstate = ['REM']
+        sleepstate = ['wake']
         recordingtype = ['baseline']
-        results = {'Animal_Number':[animal_number]*627, 'Channel_Number': channel_number[i]*627,
+        results_channel_number = [channel_number[i]]
+        results = {'Animal_Number':[animal_number]*627, 'Channel_Number': results_channel_number*627,
         'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
         'Frequency': frequency, 'Power': list_average_1}
 
@@ -192,7 +193,7 @@ animal_number = animal_number_one_brainstate[-1]
 print(animal_number)
 for i in range(len(channel_number)):
     data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number[i])
-    timevalues = brainstate_times(brain_state_1, 2)
+    timevalues = brainstate_times(brain_state_1, 0)
     filtered = highpass(data_baseline1)
     datavalues = channel_data_extraction(timevalues, filtered)
     withoutartifacts = remove_noise(datavalues)
@@ -208,9 +209,10 @@ for i in range(len(channel_number)):
             genotype = genotype_per_animal[x]
     print(genotype)
 
-    sleepstate = ['REM']
-    recordingtype = ['baseline'] 
-    results = {'Animal_Number':[animal_number]*627, 'Channel_Number' : channel_number[i]*627,
+    sleepstate = ['wake']
+    recordingtype = ['baseline']
+    results_channel_number = [channel_number[i]] 
+    results = {'Animal_Number':[animal_number]*627, 'Channel_Number' : results_channel_number*627,
      'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
     'Frequency': frequency, 'Power': list_average_1}
 
@@ -218,13 +220,8 @@ for i in range(len(channel_number)):
     small_dfs_one_brainstate.append(df_lastvalue)
 
 
-'''checking last df is the last animal in list'''
-print(len(small_dfs_one_brainstate))
-print(len(small_dfs_two_brainstates))
-
-one_brainstate_REM = numpy.asarray(small_dfs_one_brainstate)
-
 os.chdir('/home/melissa/all_taini_melissa/')
-numpy.save('one_brainstate_REM', one_brainstate_REM)
 
-
+merged_one_brainstate = pd.concat(small_dfs_one_brainstate)
+print(merged_one_brainstate)
+merged_one_brainstate.to_csv('allchannels_1_brainstate.csv', index=True)
