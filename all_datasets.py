@@ -4,7 +4,7 @@ from numpy.core.fromnumeric import mean
 from numpy.lib.function_base import average
 from psd_taini_mainfunctions import loading_analysis_files, brainstate_times, highpass
 from psd_taini_mainfunctions import channel_data_extraction, loading_analysis_files_onebrainstate, looking_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
-from psd_taini_mainfunctions import starting_times_dict, channels_dict, genotype_per_animal
+from psd_taini_mainfunctions import starting_times_dict_baseline, channels_dict, genotype_per_animal
 
 #other required imports 
 import pandas as pd 
@@ -21,7 +21,8 @@ from pandas import ExcelWriter
 
 path = '/home/melissa/preprocessing/numpyformat_baseline'
 
-animal_number_two_brainstates = [ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092'] #S7101
+animal_number_two_brainstates = ['S7101']
+#[ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092'] #S7101
 animal_number_one_brainstate = [ 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094', 'S7098', 'S7068']
 channel_number = [5,6,8,9]
 
@@ -97,7 +98,7 @@ for i in range(len(animal_number_two_brainstates)-1):
 #last animal not included in loop
 animal_number = animal_number_two_brainstates[-1]
 for i in range(len(channel_number)):
-    data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict, channel_number[i])
+    data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict_baseline, channel_number[i])
     timevalues_1 = brainstate_times(brain_state_1, 0)
     timevalues_2 = brainstate_times(brain_state_2, 0)
     filtered_1 = highpass(data_baseline1)
@@ -160,7 +161,7 @@ small_dfs_one_brainstate = []
 for i in range(len(animal_number_one_brainstate)-1):
     animal_number = animal_number_one_brainstate[i]
     for i in range(len(channel_number)):
-        data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number[i])
+        data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict_baseline, channel_number[i])
         timevalues = brainstate_times(brain_state_1, 0)
         filtered = highpass(data_baseline1)
         datavalues = channel_data_extraction(timevalues, filtered)
