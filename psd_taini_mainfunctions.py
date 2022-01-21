@@ -130,11 +130,10 @@ def loading_analysis_files(path, animal_number, starting_times_dict, channel_num
             
     x = time_1[0]
     y = time_2[0]
-    print(x,y)
     
     global data_baseline1
     global data_baseline2
-    print(channel_number)
+
     data_baseline1 = data[channel_number, x:]
     data_baseline2 = data[channel_number, y:]
     
@@ -258,8 +257,6 @@ def highpass(raw_data):
     high = highcut/nyq 
     butter_b, butter_a = signal.butter(order, [low, high], btype='band', analog = False)
 
-    print(butter_b, butter_a)
-
     def butter_bandpass_filter(butter_b, butter_a, raw_data):
         butter_y = signal.filtfilt(butter_b, butter_a, raw_data)
         return butter_y
@@ -311,9 +308,6 @@ def remove_noise(extracted_datavalues):
 
     global channels_withoutnoise
     channels_withoutnoise = [i for j, i in enumerate(extracted_datavalues) if j not in removing_duplicates]
-
-    print(len(extracted_datavalues))
-    print(len(channels_withoutnoise))
 
     return channels_withoutnoise
 
@@ -368,12 +362,10 @@ def looking_for_outliers(psd, frequency):
 
     for i, item in enumerate(intercept_list):
         if intercept_list[i] > 8:
-            print(i)
             intercept_epochs_remove.append(i)
 
     for i, item in enumerate(slope_list):
         if slope_list[i] < -0.5:
-            print(i)
             slope_epochs_remove.append(i)
 
     return intercept_epochs_remove, slope_epochs_remove

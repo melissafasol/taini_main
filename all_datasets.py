@@ -25,14 +25,9 @@ animal_number_two_brainstates = [ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', '
 animal_number_one_brainstate = [ 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094', 'S7098', 'S7068', 'S7101']
 channel_number = [5,6,8,9]
 
-print(len(animal_number_two_brainstates))
-print(len(animal_number_one_brainstate))
-
 'all empty lists below'
 small_dfs_two_brainstates = []
 slopegradient_intercept =[]
-
-
 
 'loop below calculates psd average per channel for every number in two_brainstates list'
 for i in range(len(animal_number_two_brainstates)-1):
@@ -48,8 +43,6 @@ for i in range(len(animal_number_two_brainstates)-1):
         datavalues_2 = channel_data_extraction(timevalues_2, filtered_2)
         withoutartifacts_1 = remove_noise(datavalues_1)
         withoutartifacts_2 = remove_noise(datavalues_2)
-        print(withoutartifacts_1)
-        print(type(withoutartifacts_1))
         psd_1, frequency = psd_per_channel(withoutartifacts_1)
         psd_2, frequency = psd_per_channel(withoutartifacts_2)
         intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_1, frequency)
@@ -60,7 +53,6 @@ for i in range(len(animal_number_two_brainstates)-1):
         psd_cleaned_2 = remove_epochs(intercept_epochs_remove_2, slope_epochs_remove_2, psd_2)
         psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
         list_mean_1 = list(psd_average_1)
-        print(list_mean_1)
         psd_average_2 = psd_average(psd_cleaned_2, frequency, animal_number)
         list_mean_2 = list(psd_average_2)
     
@@ -68,7 +60,7 @@ for i in range(len(animal_number_two_brainstates)-1):
         for x in genotype_per_animal:
             if x == animal_number:
                 genotype = genotype_per_animal[x]
-        print(genotype)
+    
 
         sleepstate = ['wake']
         recordingtype = ['baseline']
@@ -80,7 +72,6 @@ for i in range(len(animal_number_two_brainstates)-1):
         col = df_1.loc[:, "Power_1":"Power_2"]
         df_1["Power"] = col.mean(axis = 1)
         average_p = df_1.loc[:, "Power"]
-        print(average_p)
         df_1.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
         #fig = plt.figure()
         #plt.semilogy(frequency, average_p)
@@ -124,7 +115,6 @@ for i in range(len(channel_number)):
     for x in genotype_per_animal:
         if x == animal_number:
             genotype = genotype_per_animal[x]
-    print(genotype)
 
     sleepstate = ['wake']
     recordingtype = ['baseline']
@@ -154,7 +144,6 @@ os.chdir('/home/melissa/all_taini_melissa/')
 
 
 merged_two_brainstates = pd.concat(small_dfs_two_brainstates)
-print(merged_two_brainstates)
 merged_two_brainstates.to_csv('allchannels_2_brainstates_test.csv', index = True)
 
 small_dfs_one_brainstate = []
@@ -177,7 +166,6 @@ for i in range(len(animal_number_one_brainstate)-1):
         for x in genotype_per_animal:
             if x == animal_number:
                 genotype = genotype_per_animal[x]
-        print(genotype)
 
         sleepstate = ['wake']
         recordingtype = ['baseline']
@@ -209,7 +197,6 @@ for i in range(len(channel_number)):
     for x in genotype_per_animal:
         if x == animal_number:
             genotype = genotype_per_animal[x]
-    print(genotype)
 
     sleepstate = ['wake']
     recordingtype = ['baseline']
@@ -225,5 +212,4 @@ for i in range(len(channel_number)):
 os.chdir('/home/melissa/all_taini_melissa/')
 
 merged_one_brainstate = pd.concat(small_dfs_one_brainstate)
-print(merged_one_brainstate)
 merged_one_brainstate.to_csv('allchannels_1_brainstate.csv', index=True)
