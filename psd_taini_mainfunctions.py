@@ -351,9 +351,9 @@ def looking_for_outliers(psd, frequency):
     slope_list = []
     intercept_list = []
 
-    for i in range(len(psd)):
-        plt.semilogy(frequency, psd[i])
-        slope, intercept = np.polyfit(frequency, psd[i], 1)
+    for i in psd:
+        plt.semilogy(frequency, i)
+        slope, intercept = np.polyfit(frequency, i, 1)
         slope_list.append(slope)
         intercept_list.append(intercept)
 
