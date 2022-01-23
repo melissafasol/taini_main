@@ -391,7 +391,7 @@ def plot_lin_reg(psd, frequency):
         plt.semilogy(frequency, psd[i])
         slope, intercept = np.polyfit(frequency, psd[i], 1)
 
-plt.show()
+#plt.show()
 
 def psd_average(psd,frequency, animal_number): 
     
@@ -400,13 +400,13 @@ def psd_average(psd,frequency, animal_number):
     global mean_values
     mean_values = df_psd.mean(axis = 0)
 
-    fig = plt.figure()
+    #fig = plt.figure()
     plt.semilogy(frequency, mean_values)
-    plt.xlabel('frequency [Hz]')
-    plt.xlim(1,100)
-    plt.ylim(10**-3, 10**4)
-    plt.ylabel('Power spectrum')
-    fig.suptitle(animal_number)
+    #plt.xlabel('frequency [Hz]')
+    #plt.xlim(1,100)
+    #plt.ylim(10**-3, 10**4)
+    #plt.ylabel('Power spectrum')
+    #fig.suptitle(animal_number)
     os.chdir('/home/melissa/psd_plots_december21')
     #fig.savefig(animal_number + animal_id)
     #plt.show()
