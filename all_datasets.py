@@ -22,12 +22,17 @@ from pandas import ExcelWriter
 path = '/home/melissa/preprocessing/numpyformat_baseline'
 
 animal_number_two_brainstates = [ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092']
-animal_number_one_brainstate = [ 'S7072', 'S7074', 'S7075', 'S7076', 'S7088', 'S7094', 'S7098', 'S7068', 'S7101']
-channel_number = [5,6,8,9]
+animal_number_one_brainstate = [ 'S7068', 'S7072', 'S7074', 'S7075', 'S7076', 'S7087','S7088', 'S7094', 'S7098', 'S7068', 'S7101']
+channel_number = [4]
 
 'all empty lists below'
 small_dfs_two_brainstates = []
+small_dfs_one_brainstate = []
 slopegradient_intercept =[]
+frequency_values = numpy.arange(0, 125.2, 0.2)
+frequency_df = pd.DataFrame({'Frequency': frequency_values})
+small_dfs_two_brainstates.append(frequency_df)
+small_dfs_one_brainstate.append(frequency_df)
 
 'loop below calculates psd average per channel for every number in two_brainstates list'
 for i in range(len(animal_number_two_brainstates)-1):
@@ -35,8 +40,8 @@ for i in range(len(animal_number_two_brainstates)-1):
     print(animal_number)
     for i in range(len(channel_number)):
         data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict_baseline, channel_number[i])
-        timevalues_1 = brainstate_times(brain_state_1, 0)
-        timevalues_2 = brainstate_times(brain_state_2, 0)
+        timevalues_1 = brainstate_times(brain_state_1, 2)
+        timevalues_2 = brainstate_times(brain_state_2, 2)
         filtered_1 = highpass(data_baseline1)
         filtered_2 = highpass(data_baseline2)
         datavalues_1 = channel_data_extraction(timevalues_1, filtered_1)
@@ -61,17 +66,11 @@ for i in range(len(animal_number_two_brainstates)-1):
             if x == animal_number:
                 genotype = genotype_per_animal[x]
     
-
-        sleepstate = ['wake']
-        recordingtype = ['baseline']
-        results_channel_number = [channel_number[i]]
-        results = {'Animal_Number':[animal_number]*627, 'Channel_Number': results_channel_number*627,
-        'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-        'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
+        results = { 'Power_1': list_mean_1, 'Power_2': list_mean_2}
         df_1 = pd.DataFrame(data = results)
         col = df_1.loc[:, "Power_1":"Power_2"]
-        df_1["Power"] = col.mean(axis = 1)
-        average_p = df_1.loc[:, "Power"]
+        df_1[animal_number] = col.mean(axis = 1)
+        average_p = df_1.loc[:, animal_number]
         df_1.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
         #fig = plt.figure()
         #plt.semilogy(frequency, average_p)
@@ -91,8 +90,8 @@ for i in range(len(animal_number_two_brainstates)-1):
 animal_number = animal_number_two_brainstates[-1]
 for i in range(len(channel_number)):
     data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict_baseline, channel_number[i])
-    timevalues_1 = brainstate_times(brain_state_1, 0)
-    timevalues_2 = brainstate_times(brain_state_2, 0)
+    timevalues_1 = brainstate_times(brain_state_1, 2)
+    timevalues_2 = brainstate_times(brain_state_2, 2)
     filtered_1 = highpass(data_baseline1)
     filtered_2 = highpass(data_baseline2)
     datavalues_1 = channel_data_extraction(timevalues_1, filtered_1)
@@ -116,18 +115,13 @@ for i in range(len(channel_number)):
         if x == animal_number:
             genotype = genotype_per_animal[x]
 
-    sleepstate = ['wake']
-    recordingtype = ['baseline']
-    results_channel_number = [channel_number[i]]
-    results = {'Animal_Number':[animal_number]*627, 'Channel_Number': results_channel_number*627,
-     'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-           'Frequency': frequency, 'Power_1': list_mean_1, 'Power_2': list_mean_2}
-
+    results = { 'Power_1': list_mean_1, 'Power_2': list_mean_2}
     df_lastvalue = pd.DataFrame(data = results)
     col = df_lastvalue.loc[:, "Power_1":"Power_2"]
-    df_lastvalue["Power"] = col.mean(axis = 1)
-    average_p = df_lastvalue.loc[:, "Power"]
+    df_lastvalue[animal_number] = col.mean(axis = 1)
+    average_p = df_lastvalue.loc[:, animal_number]
     df_lastvalue.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
+    
     #fig = plt.figure()
     #plt.semilogy(frequency, average_p)
     #plt.xlabel('frequency [Hz]')
@@ -142,17 +136,15 @@ for i in range(len(channel_number)):
 
 os.chdir('/home/melissa/all_taini_melissa/')
 
+merged_two_brainstates = pd.concat(small_dfs_two_brainstates, axis=1)
+merged_two_brainstates.to_csv('baseline_2_brainstates_test.csv', index = True)
 
-merged_two_brainstates = pd.concat(small_dfs_two_brainstates)
-merged_two_brainstates.to_csv('allchannels_2_brainstates_test.csv', index = True)
-
-small_dfs_one_brainstate = []
 
 for i in range(len(animal_number_one_brainstate)-1):
     animal_number = animal_number_one_brainstate[i]
     for i in range(len(channel_number)):
         data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict_baseline, channel_number[i])
-        timevalues = brainstate_times(brain_state_1, 0)
+        timevalues = brainstate_times(brain_state_1, 2)
         filtered = highpass(data_baseline1)
         datavalues = channel_data_extraction(timevalues, filtered)
         withoutartifacts = remove_noise(datavalues)
@@ -167,15 +159,8 @@ for i in range(len(animal_number_one_brainstate)-1):
             if x == animal_number:
                 genotype = genotype_per_animal[x]
 
-        sleepstate = ['wake']
-        recordingtype = ['baseline']
-        results_channel_number = [channel_number[i]]
-        results = {'Animal_Number':[animal_number]*627, 'Channel_Number': results_channel_number*627,
-        'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-        'Frequency': frequency, 'Power': list_average_1}
-
-        df_2 = pd.DataFrame(data = results)
-        small_dfs_one_brainstate.append(df_2)    
+        results = pd.DataFrame(data = {animal_number:list_average_1})
+        small_dfs_one_brainstate.append(results)    
     animal_number = [i+1]
 
 
@@ -183,7 +168,7 @@ animal_number = animal_number_one_brainstate[-1]
 print(animal_number)
 for i in range(len(channel_number)):
     data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict_baseline, channel_number[i])
-    timevalues = brainstate_times(brain_state_1, 0)
+    timevalues = brainstate_times(brain_state_1, 2)
     filtered = highpass(data_baseline1)
     datavalues = channel_data_extraction(timevalues, filtered)
     withoutartifacts = remove_noise(datavalues)
@@ -198,18 +183,12 @@ for i in range(len(channel_number)):
         if x == animal_number:
             genotype = genotype_per_animal[x]
 
-    sleepstate = ['wake']
-    recordingtype = ['baseline']
-    results_channel_number = [channel_number[i]] 
-    results = {'Animal_Number':[animal_number]*627, 'Channel_Number' : results_channel_number*627,
-     'Genotype':genotype*627, 'Sleep_State' : sleepstate*627, 'Recording_Type': recordingtype*627,
-    'Frequency': frequency, 'Power': list_average_1}
-
-    df_lastvalue = pd.DataFrame(data = results)
-    small_dfs_one_brainstate.append(df_lastvalue)
+    results = pd.DataFrame(data={animal_number:list_average_1})
+    small_dfs_one_brainstate.append(results)
 
 
 os.chdir('/home/melissa/all_taini_melissa/')
 
-merged_one_brainstate = pd.concat(small_dfs_one_brainstate)
-merged_one_brainstate.to_csv('allchannels_1_brainstate.csv', index=True)
+merged_one_brainstate = pd.concat(small_dfs_one_brainstate, axis=1)
+os.chdir('/home/melissa/Results')
+merged_one_brainstate.to_csv('baseline_1_brainstate.csv', index=True)
