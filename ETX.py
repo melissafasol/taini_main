@@ -27,7 +27,7 @@ animal_two_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7088', '
 animal_one_numpy_file = ['S7070', 'S7071', 'S7075', 'S7076', 'S7083', 'S7086', 'S7087','S7092', 'S7098', 'S7101', 'S7074', 'S7091']
 seizure_two_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7088', 'S7094', 'S7096']
 seizure_one_numpy_file = ['S7074', 'S7075', 'S7076', 'S7092', 'S7098', 'S7101'] 
-channel_number = 4
+channel_number = 12
 
 start_times_ETX = {'S7063_1A': [57121875], 'S7063_2A': [60697836.4],
                        'S7063_1B': [1], 'S7063_2B': [18058597.6],
@@ -66,7 +66,7 @@ ETX_2_numpyfiles.append(frequency_df)
 
 for animal in animal_two_numpy_file:
     concatenate_data, brain_state = concatenate_ETX_data(path, channel_number, animal_number= animal, start_ETX_time= start_times_ETX)
-    time_values = brainstate_times(brain_state, 0)
+    time_values = brainstate_times(brain_state, 1)
     filtered_data = highpass(concatenate_data)
     datavalues = channel_data_extraction(time_values, filtered_data)
     without_artifacts = remove_noise(datavalues)
@@ -91,7 +91,7 @@ ETX_1_numpyfile.append(frequency_df)
 
 for animal in animal_one_numpy_file:
     concatenate_data, brain_state = one_numpy_ETX(path, channel_number, animal_number= animal, start_ETX_time= start_times_ETX)
-    time_values = brainstate_times(brain_state, 0)
+    time_values = brainstate_times(brain_state, 1)
     filtered_data = highpass(concatenate_data)
     datavalues = channel_data_extraction(time_values, filtered_data)
     without_artifacts = remove_noise(datavalues)
