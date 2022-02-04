@@ -25,8 +25,11 @@ from psd_taini_mainfunctions import starting_times_dict_baseline, channels_dict,
 
 saline_two_numpy_file = ['S7070', 'S7071', 'S7074', 'S7075']
 saline_one_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7076', 'S7083', 'S7086', 'S7087', 'S7088', 'S7091', 'S7092', 'S7094', 'S7096', 'S7098', 'S7101']
+seizure_two_numpy_file = ['S7074', 'S7075']
+seizure_one_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072','S7088', 'S7092', 'S7094', 'S7096']
 
-channel_number = 11
+channel_number = 4
+brain_state_number = 4
 
 path = '/home/melissa/preprocessing/reformatted_brainstates_saline'
 saline_2_numpyfiles = []
@@ -35,9 +38,9 @@ frequency_df = pd.DataFrame({'Frequency': frequency_values})
 saline_2_numpyfiles.append(frequency_df)
 
 
-for animal in saline_two_numpy_file:
+for animal in seizure_two_numpy_file:
     concatenate_data, brain_state = concatenate_saline_data(path, channel_number, animal_number= animal, start_saline_dict = start_saline_dict)
-    time_values = brainstate_times(brain_state, 1)
+    time_values = brainstate_times(brain_state, brain_state_number)
     filtered_data = highpass(concatenate_data)
     datavalues = channel_data_extraction(time_values, filtered_data)
     without_artifacts = remove_noise(datavalues)
@@ -59,9 +62,9 @@ saline_1_numpyfile = []
 frequency_values = np.arange(0,125.2,0.2)
 frequency_df = pd.DataFrame({'Frequency': frequency_values})
 
-for animal in saline_one_numpy_file:
+for animal in seizure_one_numpy_file:
     concatenate_data, brain_state = one_numpy_saline(path, channel_number = 11, animal_number= animal, start_saline_dict = start_saline_dict)
-    time_values = brainstate_times(brain_state, 1)
+    time_values = brainstate_times(brain_state, brain_state_number)
     filtered_data = highpass(concatenate_data)
     datavalues = channel_data_extraction(time_values, filtered_data)
     without_artifacts = remove_noise(datavalues)

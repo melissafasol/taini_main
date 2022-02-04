@@ -137,8 +137,7 @@ def loading_analysis_files(path, animal_number, starting_times_dict, channel_num
     data_baseline1 = data[channel_number, x:]
     data_baseline2 = data[channel_number, y:]
     
-    return data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2
-
+    return data_baseline1, data_baseline2, brain_state_1, brain_state_2
 
 
 def loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number):
@@ -387,11 +386,17 @@ def remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd):
 
 def plot_lin_reg(psd, frequency):
 
+    slope_epochs =[]
+    intercept_epochs = []
+
     for i in range(len(psd)):
         plt.semilogy(frequency, psd[i])
         slope, intercept = np.polyfit(frequency, psd[i], 1)
+        slope_epochs.append(slope)
+        intercept_epochs.append(intercept)
 
 #plt.show()
+    return slope_epochs, intercept_epochs
 
 def psd_average(psd,frequency, animal_number): 
     
@@ -407,7 +412,6 @@ def psd_average(psd,frequency, animal_number):
     #plt.ylim(10**-3, 10**4)
     #plt.ylabel('Power spectrum')
     #fig.suptitle(animal_number)
-    os.chdir('/home/melissa/psd_plots_december21')
     #fig.savefig(animal_number + animal_id)
     #plt.show()
 

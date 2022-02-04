@@ -23,10 +23,13 @@ from pandas import ExcelWriter
 
 path = '/home/melissa/preprocessing/numpyformat_baseline'
 
-animal_number_two_brainstates = [ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7083', 'S7086', 'S7091', 'S7092']
+animal_number_two_brainstates = [ 'S7063', 'S7064', 'S7069', 'S7070', 'S7071', 'S7086', 'S7091', 'S7092']
 animal_number_one_brainstate = [ 'S7068', 'S7072', 'S7074', 'S7075', 'S7076', 'S7087','S7088', 'S7094', 'S7098', 'S7068', 'S7101']
+seizure_two_brainstates = ['S7063', 'S7064', 'S7069', 'S7072']
+seizure_one_brainstate = ['S7074', 'S7075', 'S7088', 'S7092', 'S7094']
+
 channel_number = [4]
-brain_state_number = 2
+brain_state_number = 4
 
 'all empty lists below'
 small_dfs_two_brainstates = []
@@ -38,7 +41,7 @@ small_dfs_two_brainstates.append(frequency_df)
 small_dfs_one_brainstate.append(frequency_df)
 
 'loop below calculates psd average per channel for every number in two_brainstates list'
-for i in range(len(animal_number_two_brainstates)-1):
+for i in range(len(seizure_two_brainstates)-1):
     animal_number = animal_number_two_brainstates[i]
     print(animal_number)
     for i in range(len(channel_number)):
@@ -90,9 +93,9 @@ for i in range(len(animal_number_two_brainstates)-1):
     
 
 #last animal not included in loop
-animal_number = animal_number_two_brainstates[-1]
+animal_number = seizure_two_brainstates[-1]
 for i in range(len(channel_number)):
-    data_baseline1, data_baseline2, brain_state_1, brain_state_2, time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict_baseline, channel_number[i])
+    data_baseline1, data_baseline2, brain_state_1, brain_state_2 = loading_analysis_files(path, animal_number, starting_times_dict_baseline, channel_number[i])
     timevalues_1 = brainstate_times(brain_state_1, brain_state_number)
     timevalues_2 = brainstate_times(brain_state_2, brain_state_number)
     filtered_1 = highpass(data_baseline1)
@@ -134,38 +137,6 @@ for i in range(len(channel_number)):
     #plt.show()
     small_dfs_two_brainstates.append(df_lastvalue)
 
-data_baseline1, data_baseline2, brain_state_1, brain_state_2 = concatenate_S7096(path, channel_number, animal_number = 'S7096', start_times_S7096 = start_times_S7096)
-time_1, time_2 = loading_analysis_files(path, animal_number, starting_times_dict_baseline, channel_number[i])
-timevalues_1 = brainstate_times(brain_state_1, brain_state_number)
-timevalues_2 = brainstate_times(brain_state_2, brain_state_number)
-filtered_1 = highpass(data_baseline1)
-filtered_2 = highpass(data_baseline2)
-datavalues_1 = channel_data_extraction(timevalues_1, filtered_1)
-datavalues_2 = channel_data_extraction(timevalues_2, filtered_2)
-withoutartifacts_1 = remove_noise(datavalues_1)
-withoutartifacts_2 = remove_noise(datavalues_2)
-psd_1, frequency = psd_per_channel(withoutartifacts_1)
-psd_2, frequency = psd_per_channel(withoutartifacts_2)
-intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd_1, frequency)
-#slopegradient_intercept.append([animal_number, intercept_slope])
-intercept_epochs_remove_2, slope_epochs_remove_2 = looking_for_outliers(psd_2, frequency)
-#slopegradient_intercept.append([animal_number, intercept_slope_2])
-psd_cleaned_1 = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd_1)
-psd_cleaned_2 = remove_epochs(intercept_epochs_remove_2, slope_epochs_remove_2, psd_2)
-psd_average_1 = psd_average(psd_cleaned_1, frequency, animal_number)
-list_mean_1 = list(psd_average_1)
-psd_average_2 = psd_average(psd_cleaned_2, frequency, animal_number)
-list_mean_2 = list(psd_average_2)
-
-results = { 'Power_1': list_mean_1, 'Power_2': list_mean_2}
-df_96 = pd.DataFrame(data = results)
-col = df_96.loc[:, "Power_1":"Power_2"]
-df_96[animal_number] = col.mean(axis = 1)
-average_p = df_96.loc[:, animal_number]
-df_96.drop(["Power_1", "Power_2"], axis = 1, inplace=True)
-
-small_dfs_two_brainstates.append(df_96)
-
 
 os.chdir('/home/melissa/Results/')
 
@@ -173,7 +144,7 @@ merged_two_brainstates = pd.concat(small_dfs_two_brainstates, axis=1)
 merged_two_brainstates.to_csv('baseline_2_brainstates_test.csv', index = True)
 
 
-for i in range(len(animal_number_one_brainstate)-1):
+for i in range(len(seizure_one_brainstate)-1):
     animal_number = animal_number_one_brainstate[i]
     for i in range(len(channel_number)):
         data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict_baseline, channel_number[i])
@@ -197,7 +168,7 @@ for i in range(len(animal_number_one_brainstate)-1):
     animal_number = [i+1]
 
 
-animal_number = animal_number_one_brainstate[-1]
+animal_number = seizure_one_brainstate[-1]
 print(animal_number)
 for i in range(len(channel_number)):
     data_baseline1, brain_state_1, time_1 = loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict_baseline, channel_number[i])

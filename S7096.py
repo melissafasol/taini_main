@@ -29,6 +29,7 @@ def concatenate_S7096(path, channel_number, animal_number, start_times_S7096):
         if recording.endswith('S7096_B.npy'):
             numpy_B = np.load(recording)          
 
+
     for animal_id in start_times_S7096:
         if animal_id == start_1:
             start_1 = start_times_S7096[animal_id]
@@ -43,19 +44,26 @@ def concatenate_S7096(path, channel_number, animal_number, start_times_S7096):
         elif animal_id == end_1B:
             end_3 = start_times_S7096[animal_id]
 
-    start_1 = int(start_1)
-    end_1 = int(end_1)
-    start_2 = int(start_2)
-    end_2 = int(end_2)
-    start_3 = int(start_3)
-    end_3 = int(end_3)
+    start_1 = start_1[0]
+    end_1 = end_1[0]
+    start_2 = start_2[0]
+    end_2 = end_2[0]
+    start_3 = start_3[0]
+    end_3 = end_3[0]
 
     recording_1 = numpy_A[channel_number, start_1:end_1]
     recording_2 = numpy_A[channel_number, start_2:end_2]
     recording_3 = numpy_B[channel_number, start_3:end_3]
 
+    print(recording_1.shape, recording_2.shape, recording_3.shape)
+
+    flatten_2 = recording_2.flatten()
+    flatten_3 = recording_3.flatten()
+
+    print(flatten_2.shape, flatten_3.shape)
+
     baseline_1 = recording_1
-    baseline_2 = np.concatenate((recording_2, recording_3))
+    baseline_2 = np.concatenate((flatten_2, flatten_3))
 
     for brain_state_file in files:
         if brain_state_file.endswith('A.pkl'):
