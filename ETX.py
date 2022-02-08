@@ -115,5 +115,5 @@ for animal in animal_one_numpy_file:
 merged_1_slopes_intercepts = pd.concat(ETX_slope_intercept_1, axis = 1)
 merged_1_numpyfile = pd.concat(ETX_1_numpyfile, axis = 1)
 os.chdir('/home/melissa/Results')
-merged_1_numpyfile.to_csv('wake_power_ETX_1.csv', index=True)
-merged_1_slopes_intercepts.to_csv('wake_psd_slope_gradient_ETX.csv', index=True)
+merged_1_numpyfile.to_csv('REM_power_ETX_1.csv', index=True)
+merged_1_slopes_intercepts.to_csv('REM_psd_slope_gradient_ETX.csv', index=True)
