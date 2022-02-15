@@ -18,74 +18,9 @@ import scipy
 from scipy import signal
 import re
 
+#Load files, brainstate, starting times per animal and then do analysis together
 
-#variables that may change - required for functions
-path =  '/home/melissa/preprocessing/numpyformat_baseline'
-animal_number = 'S7063'
-channel_number = 4
-
-starting_times_dict_baseline = {'S7063_1': [15324481], 'S7063_2': [36959041], 
-                       'S7064_1': [15324481], 'S7064_2':[36959041],
-                       'S7068_1': [12214513],
-                       'S7069_1': [12214513], 'S7069_2':[33849073],
-                       'S7070_1': [16481329], 'S7070_2':[38115889],
-                       'S7071_1': [16481329], 'S7071_2':[38115888],
-                       'S7072_1': [16481329], 'S7072_2': [38115888],
-                       'S7074_1': [35862289],
-                       'S7075_1': [1422772],
-                       'S7076_1': [17578081],
-                       'S7083_1': [17578081], 'S7083_2':[39212640],
-                       'S7086_1': [12830497], 'S7086_2': [34465057],
-                       'S7088_1': [18088897], 
-                       'S7091_1': [15369553], 'S7091_2': [37004112],
-                       'S7092_1': [15369553], 'S7092_2':[37004112],
-                       'S7094_1': [34465057], 
-                       'S7098_1': [35246305], 'S7098_2':[56880865],
-                       'S7101_1': [35246305], 'S7101_2':[56880865]}
-
-starting_times_dict_saline = {'S7063_1': [37094257], 'S7063_2': [58728816], 
-                       'S7064_1': [15324481], 'S7064_2':[36959040],
-                       'S7068_1': [37034161], 'S7068_2':[58668720],
-                       'S7069_1': [37034161], 'S7069_2':[58668720],
-                       'S7070_1A': [38055001], 'S7070_2A':[42442008],
-                       'S7070_1B':[1], 'S7070_2B':[17247552],
-                       'S7071_1A': [38055001], 'S7071_2A':[42442008],
-                       'S7071_1B':[1], 'S7071_2B':[17247552],
-                       'S7072_1': [59750449], 'S7072_2': [81385008],
-                       'S7074_1A': [56248286], 'S7074_2A':[63655117],
-                       'S7074_1B':[1], 'S7074_2B':[14227728],
-                       'S7075_1A': [56248286], 'S7075_2A':[63655117],
-                       'S7075_1B':[1], 'S7075_2B':[14227728],
-                       'S7076_1': [18284209], 'S7076_2': [39918768],
-                       'S7083_1': [60847201], 'S7083_2':[82481760],
-                       'S7086_1': [18103921], 'S7086_2': [39738480],
-                       'S7088_1': [19200673], 'S7088_2': [40835232], 
-                       'S7091_1': [58638673], 'S7091_2': [80273232],
-                       'S7092_1': [58638673], 'S7092_2':[80273232],
-                       'S7094_1': [12830497], 'S7094_2': [34465056],
-                       'S7098_1': [13611745], 'S7098_2':[35246304],
-                       'S7101_1': [13611745], 'S7101_2':[35246304]}
-
-
-channels_dict = {'S1Tr_RIGHT': [0], 'EMG_RIGHT':[1], 'M2_FrA_RIGHT':[2],
-                 'M2_ant_RIGHT':[3],'M1_ant_RIGHT':[4], 'V2ML_RIGHT':[5],
-                 'V1M_RIGHT':[6], 'S1HL_S1FL_RIGHT':[7], 'V1M_LEFT':[8],
-                 'V2ML_LEFT':[9], 'S1HL_S1FL_LEFT':[10], 'M1_ant_LEFT':[11],
-                 'M2_ant_LEFT':[12],'M2_FrA_LEFT':[13], 'EMG_LEFT':[14],
-                 'S1Tr_LEFT':[15]}
-
-genotype_per_animal = {'S7063':['GAP'], 'S7064':['GAP'], 'S7068':['WT'],
-                        'S7069':['GAP'],'S7070':['WT'], 'S7071':['WT'],
-                        'S7072':['GAP'], 'S7074':['WT'], 'S7075':['GAP'],
-                        'S7076':['GAP'], 'S7083': ['WT'], 'S7086':['WT'], 
-                        'S7088':['GAP'], 'S7091':['WT'], 'S7092':['GAP'],
-                        'S7094':['GAP'], 'S7098':['WT'], 'S7101':['WT']}
-
-
-
-#load files, brainstate, starting times per animal and then do analysis together
-
-def loading_analysis_files(path, animal_number, starting_times_dict, channel_number):
+def load_analysis_files(path, animal_number, start_times_dict, channel_number):
     #specify starting time to use in dictionary 
     starting_1 = animal_number + '_1'
     starting_2 = animal_number + '_2'
@@ -119,14 +54,14 @@ def loading_analysis_files(path, animal_number, starting_times_dict, channel_num
 
     #finding start times for specific animal from start_times dictionary 
     global animal_id
-    for animal_id in starting_times_dict:
+    for animal_id in start_times_dict:
         if animal_id == starting_1:
             global time_1
             global time_2
-            time_1 = starting_times_dict[animal_id]
+            time_1 = start_times_dict[animal_id]
         else:
             if animal_id ==starting_2:
-                time_2 = starting_times_dict[animal_id]
+                time_2 = start_times_dict[animal_id]
             
     x = time_1[0]
     y = time_2[0]
@@ -140,7 +75,7 @@ def loading_analysis_files(path, animal_number, starting_times_dict, channel_num
     return data_baseline1, data_baseline2, brain_state_1, brain_state_2
 
 
-def loading_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number):
+def load_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number):
 
     starting_1 = animal_number + '_1'
 
@@ -176,8 +111,7 @@ def loading_analysis_files_onebrainstate(path, animal_number, starting_times_dic
     return data_baseline1, brain_state_1, time_1
 
 
-#the function below slices out indices from data file that correspond to 
-#writing definitions for different sleep stages
+#the function below slices out indices from data file that correspond to brainstates
 
 
 def brainstate_times(brain_state_file, brainstate_number):
@@ -266,7 +200,7 @@ def highpass(raw_data):
     return filtered_data
 
 'this function extracts data values which correspond to time values from brain state file'
-'currently only one channel'
+
 
 def channel_data_extraction(timevalues_array, data_file):
 
@@ -408,11 +342,11 @@ def psd_average(psd,frequency, animal_number):
     #fig = plt.figure()
     plt.semilogy(frequency, mean_values)
     #plt.xlabel('frequency [Hz]')
-    #plt.xlim(1,100)
+    #plt.xlim(1,50)
     #plt.ylim(10**-3, 10**4)
     #plt.ylabel('Power spectrum')
     #fig.suptitle(animal_number)
-    #fig.savefig(animal_number + animal_id)
+    #fig.savefig(str(animal_number))
     #plt.show()
 
 
