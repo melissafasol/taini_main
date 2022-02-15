@@ -29,7 +29,7 @@ seizure_two_numpy_file = ['S7074', 'S7075']
 seizure_one_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072','S7088', 'S7092', 'S7094', 'S7096']
 
 channel_number = 11
-brain_state_number = 1
+brain_state_number = 0
 
 path = '/home/melissa/preprocessing/reformatted_brainstates_saline'
 saline_2_numpyfiles = []
@@ -59,8 +59,8 @@ for animal in saline_two_numpy_file:
 merged_2_numpyfiles = pd.concat(saline_2_numpyfiles, axis = 1)
 os.chdir('/home/melissa/Results')
 merged_2_slope_intercepts = pd.concat(saline_slope_intercept_2, axis=1)
-merged_2_numpyfiles.to_csv('saline_power_2.csv', index=False)
-merged_2_slope_intercepts.to_csv('slope_intercept_saline_2.csv', index=True)
+merged_2_numpyfiles.to_csv('wake_saline_power_2.csv', index=False)
+merged_2_slope_intercepts.to_csv('wake_slope_intercept_saline_2.csv', index=True)
 
 
 path = '/home/melissa/preprocessing/reformatted_brainstates_saline'
@@ -89,8 +89,8 @@ for animal in saline_one_numpy_file:
 merged_1_numpyfile = pd.concat(saline_1_numpyfile, axis = 1)
 os.chdir('/home/melissa/Results')
 merged_1_slope_intercepts = pd.concat(saline_slope_intercept_1, axis=1)
-merged_1_numpyfile.to_csv('_saline_power_1.csv', index=False)
-merged_1_slope_intercepts.to_csv('slope_intercept_saline_1.csv', index=True)
+merged_1_numpyfile.to_csv('_wakesaline_power_1.csv', index=False)
+merged_1_slope_intercepts.to_csv('wake_slope_intercept_saline_1.csv', index=True)
 
 
 
