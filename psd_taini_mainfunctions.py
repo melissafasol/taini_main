@@ -243,10 +243,10 @@ def brainstate_times(brain_state_file, brainstate_number):
 
     return timevalues_array       
 
-'this function filters out low-frequency drifts and frequencies above 100Hz'
+'this function filters out low-frequency drifts and frequencies above 50Hz'
 def highpass(raw_data):
     lowcut = 1
-    highcut = 100
+    highcut = 50
     order = 3
     sampling_rate = 250.4
     
@@ -337,7 +337,7 @@ def psd_per_channel(data_without_noise):
     return psd, frequency
 
 'function below calculates line of best fit for psd of each epoch and returns the average slope intercept and gradient'
-def looking_for_outliers(psd, frequency):
+def look_for_outliers(psd, frequency):
 
     global slope_list
     global intercept_list
