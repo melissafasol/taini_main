@@ -78,9 +78,9 @@ for animal in animal_two_numpy_file:
         slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
         psd_average_results = psd_average(psd_clean, frequency, animal)
         list_mean = list(psd_average_results)
-        spectralslope_df = pd.DataFrame(data = {str(animal) + str(chan) + 'slope': slope_epochs, str(animal) + str(chan) + 'intercept':intercept_epochs})
+        spectralslope_df = pd.DataFrame(data = {str(animal) + '_chan_' + str(chan) + '_slope': slope_epochs, str(animal) + '_chan_' + str(chan) + '_intercept':intercept_epochs})
         results=pd.DataFrame(data={
-            str(animal) + str(chan):list_mean})
+            str(animal) + '_chan' + str(chan):list_mean})
         ETX_2_numpyfiles.append(results)
         ETX_slope_intercept_2.append(spectralslope_df)
 
@@ -113,11 +113,12 @@ for animal in animal_one_numpy_file:
         psd_average_results = psd_average(psd_clean, frequency, animal)
         list_mean = list(psd_average_results)
         slope_intercept_df = pd.DataFrame(
-        data = {animal + '_' + chan + '_slope'
-        + brain_state_number: slope_epochs, 
-        animal + '_' + chan + 'intercept'
-        + brain_state_number: intercept_epochs})
-        results = pd.DataFrame(data = {animal + chan :list_mean})
+        data = {str(animal) + '_chan_' + str(chan) + '_slope_'
+        + str(brain_state_number): slope_epochs, 
+        str(animal) + '_' + str(chan) + 'intercept'
+        + str(brain_state_number): intercept_epochs})
+        results = pd.DataFrame(data = {str(animal) + '_chan_' + 
+        str(chan) :list_mean})
         ETX_1_numpyfile.append(results)
         ETX_slope_intercept_1.append(slope_intercept_df)
 
