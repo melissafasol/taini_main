@@ -27,7 +27,7 @@ animal_one_numpy_file = ['S7070', 'S7071', 'S7075', 'S7076', 'S7083', 'S7086', '
 seizure_two_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7094', 'S7096'] #S7088
 seizure_one_numpy_file = ['S7074', 'S7075', 'S7076', 'S7092'] #S7098, S7101
 channel_number = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-brain_state_number = 2
+brain_state_number = 1
 
 
 path = '/home/melissa/preprocessing/reformatted_brainstates_ETX'
