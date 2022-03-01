@@ -179,7 +179,7 @@ def brainstate_times(brain_state_file, brainstate_number):
 
 'this function filters out low-frequency drifts and frequencies above 50Hz'
 def highpass(raw_data):
-    lowcut = 1
+    lowcut = 0.2
     highcut = 50
     order = 3
     sampling_rate = 250.4
@@ -219,8 +219,6 @@ def channel_data_extraction(timevalues_array, data_file):
 'this function removes epochs with data values that exceed 4000'
 
 def remove_noise(extracted_datavalues):
-
-    artifacts_removed = []
     
     channel_threshold = []
 
@@ -231,18 +229,13 @@ def remove_noise(extracted_datavalues):
             else:
                 pass
                 
-    removing_duplicates =[]
-    for i in range(len(channel_threshold)):
-        j = i + 1
-        if i == j:
-            del[i]
-        else:
-            removing_duplicates.append(channel_threshold[i])
+    unsorted_duplicate_list = list(set(channel_threshold))
+    removing_duplicates = sorted(unsorted_duplicate_list)
 
     global channels_withoutnoise
     channels_withoutnoise = [i for j, i in enumerate(extracted_datavalues) if j not in removing_duplicates]
 
-    return channels_withoutnoise
+    return channels_withoutnoise, removing_duplicates
 
 
 'this function calculates psd via Welch method on data with noise artifacts removed'
@@ -278,9 +271,9 @@ def look_for_outliers(psd, frequency):
     slope_list = []
     intercept_list = []
 
-    for i in psd:
-        plt.semilogy(frequency, i)
-        slope, intercept = np.polyfit(frequency, i, 1)
+    for epoch in psd:
+        plt.semilogy(frequency, epoch)
+        slope, intercept = np.polyfit(frequency, epoch, 1)
         slope_list.append(slope)
         intercept_list.append(intercept)
 
@@ -323,9 +316,9 @@ def plot_lin_reg(psd, frequency):
     slope_epochs =[]
     intercept_epochs = []
 
-    for i in range(len(psd)):
-        plt.semilogy(frequency, psd[i])
-        slope, intercept = np.polyfit(frequency, psd[i], 1)
+    for epoch in psd:
+        plt.semilogy(frequency, epoch)
+        slope, intercept = np.polyfit(frequency, epoch, 1)
         slope_epochs.append(slope)
         intercept_epochs.append(intercept)
 

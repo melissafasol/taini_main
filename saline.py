@@ -20,8 +20,9 @@ from saline_functions import start_saline_dict, concatenate_saline_data, one_num
 from numpy.core.fromnumeric import mean
 from numpy.lib.function_base import average
 from psd_taini_mainfunctions import brainstate_times, highpass
-from psd_taini_mainfunctions import channel_data_extraction, looking_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
-from psd_taini_mainfunctions import starting_times_dict_baseline, channels_dict, genotype_per_animal
+from psd_taini_mainfunctions import channel_data_extraction, look_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
+
+from constants import start_times_ETX, channels_dict
 
 saline_two_numpy_file = ['S7070', 'S7071', 'S7074', 'S7075']
 saline_one_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7076', 'S7083', 'S7086', 'S7087', 'S7088', 'S7091', 'S7092', 'S7094', 'S7096', 'S7098', 'S7101']
@@ -46,7 +47,7 @@ for animal in saline_two_numpy_file:
     datavalues = channel_data_extraction(time_values, filtered_data)
     without_artifacts = remove_noise(datavalues)
     psd, frequency = psd_per_channel(without_artifacts)
-    intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd, frequency)
+    intercept_epochs_remove, slope_epochs_remove = look_for_outliers(psd, frequency)
     psd_clean = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
     slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
     psd_average_results = psd_average(psd_clean, frequency, animal)
@@ -76,7 +77,7 @@ for animal in saline_one_numpy_file:
     datavalues = channel_data_extraction(time_values, filtered_data)
     without_artifacts = remove_noise(datavalues)
     psd, frequency = psd_per_channel(without_artifacts)
-    intercept_epochs_remove, slope_epochs_remove = looking_for_outliers(psd, frequency)
+    intercept_epochs_remove, slope_epochs_remove = look_for_outliers(psd, frequency)
     psd_clean = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
     slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
     psd_average_results = psd_average(psd_clean, frequency, animal)

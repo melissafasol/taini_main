@@ -22,11 +22,11 @@ from constants import start_times_ETX, channels_dict, genotype_per_animal
 
 from ETX_functions import concatenate_ETX_data, one_numpy_ETX
 
-animal_two_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7088', 'S7094', 'S7096']
+animal_two_numpy_file = ['S7063','S7064', 'S7068', 'S7069', 'S7072', 'S7088', 'S7094', 'S7096'] 
 animal_one_numpy_file = ['S7070', 'S7071', 'S7075', 'S7076', 'S7083', 'S7086', 'S7087','S7092', 'S7098', 'S7101', 'S7074', 'S7091']
 seizure_two_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7094', 'S7096'] #S7088
 seizure_one_numpy_file = ['S7074', 'S7075', 'S7076', 'S7092'] #S7098, S7101
-channel_number = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+channel_number = [4,7,10,11]
 brain_state_number = 1
 
 
@@ -44,11 +44,13 @@ for animal in animal_two_numpy_file:
         filtered_data = highpass(concatenate_data)
         datavalues = channel_data_extraction(time_values, filtered_data)
         without_artifacts = remove_noise(datavalues)
-        psd, frequency = psd_per_channel(without_artifacts)
+        noartifacts_array = without_artifacts[0]
+        psd, frequency = psd_per_channel(noartifacts_array)
         intercept_epochs_remove, slope_epochs_remove = look_for_outliers(psd, frequency)
         psd_clean = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
         slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
         psd_average_results = psd_average(psd_clean, frequency, animal)
+        print(psd_average_results)
         list_mean = list(psd_average_results)
         spectralslope_df = pd.DataFrame(data = {str(animal) + '_chan_' + str(chan) + '_slope': slope_epochs, str(animal) + '_chan_' + str(chan) + '_intercept':intercept_epochs})
         results=pd.DataFrame(data={
@@ -58,7 +60,7 @@ for animal in animal_two_numpy_file:
 
 merged_2_psd = pd.concat(ETX_2_numpyfiles, axis = 1)
 merged_2_spectralslope = pd.concat(ETX_slope_intercept_2, axis=1)
-os.chdir('/home/melissa/Results')
+os.chdir('/home/melissa/Results/discarding_epoch_test')
 merged_2_psd.to_csv(str(brain_state_number) + 
 '_psd_ETX_2.csv', index=True)
 merged_2_spectralslope.to_csv(str(brain_state_number) + '_spectralslope_ETX.csv', index=True)
@@ -75,7 +77,9 @@ for animal in animal_one_numpy_file:
         filtered_data = highpass(concatenate_data)
         datavalues = channel_data_extraction(time_values, filtered_data)
         without_artifacts = remove_noise(datavalues)
-        psd, frequency = psd_per_channel(without_artifacts)
+        noartifacts = without_artifacts[0]
+        psd, frequency = psd_per_channel(noartifacts)
+        print(psd)
         intercept_epochs_remove, slope_epochs_remove = look_for_outliers(psd, frequency)
         psd_clean = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
         slope_epochs, intercept_epochs = plot_lin_reg(
@@ -97,7 +101,7 @@ merged_1_spectralslope = pd.concat(
 merged_1_psd = pd.concat(
     ETX_1_numpyfile, axis = 1)
 
-os.chdir('/home/melissa/Results')
+os.chdir('/home/melissa/Results/discarding_epoch_test')
 merged_1_psd.to_csv(str(brain_state_number) 
             + '_psd_ETX_1.csv', index=True)
 merged_1_spectralslope.to_csv(str(brain_state_number)             + '_spectralslope_ETX.csv', index=True)
