@@ -22,20 +22,20 @@ from numpy.lib.function_base import average
 from psd_taini_mainfunctions import brainstate_times, highpass
 from psd_taini_mainfunctions import channel_data_extraction, look_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
 
-from constants import start_times_ETX, channels_dict
+from constants import start_times_saline, channels_dict
 
 saline_two_numpy_file = ['S7070', 'S7071', 'S7074', 'S7075']
 saline_one_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7076', 'S7083', 'S7086', 'S7087', 'S7088', 'S7091', 'S7092', 'S7094', 'S7096', 'S7098', 'S7101']
 seizure_two_numpy_file = ['S7074', 'S7075']
 seizure_one_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072','S7088', 'S7092', 'S7094', 'S7096']
 
-channel_number = 11
-brain_state_number = 0
+channel_number = [4,7,10,11]
+brain_state_number = 2
 
 path = '/home/melissa/preprocessing/reformatted_brainstates_saline'
 saline_2_numpyfiles = []
 saline_slope_intercept_2 = []
-frequency_values = np.arange(0, 125.2, 0.2)
+frequency_values = np.arange(0, 100, 0.2)
 frequency_df = pd.DataFrame({'Frequency': frequency_values})
 saline_2_numpyfiles.append(frequency_df)
 
@@ -60,8 +60,8 @@ for animal in saline_two_numpy_file:
 merged_2_numpyfiles = pd.concat(saline_2_numpyfiles, axis = 1)
 os.chdir('/home/melissa/Results')
 merged_2_slope_intercepts = pd.concat(saline_slope_intercept_2, axis=1)
-merged_2_numpyfiles.to_csv('wake_saline_power_2.csv', index=False)
-merged_2_slope_intercepts.to_csv('wake_slope_intercept_saline_2.csv', index=True)
+merged_2_numpyfiles.to_csv('_saline_power_2.csv', index=False)
+merged_2_slope_intercepts.to_csv('_slope_intercept_saline_2.csv', index=True)
 
 
 path = '/home/melissa/preprocessing/reformatted_brainstates_saline'

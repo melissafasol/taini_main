@@ -180,7 +180,7 @@ def brainstate_times(brain_state_file, brainstate_number):
 'this function filters out low-frequency drifts and frequencies above 50Hz'
 def highpass(raw_data):
     lowcut = 0.2
-    highcut = 50
+    highcut = 100
     order = 3
     sampling_rate = 250.4
     
