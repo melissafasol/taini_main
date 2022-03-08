@@ -54,25 +54,23 @@ def load_analysis_files(path, animal_number, start_times_dict, channel_number):
 
     #finding start times for specific animal from start_times dictionary 
     global animal_id
+    global data_baseline1
+    global data_baseline2
     for animal_id in start_times_dict:
         if animal_id == starting_1:
             global time_1
             global time_2
             time_1 = start_times_dict[animal_id]
+            x = time_1[0]
+            data_baseline_1 = data[channel_number, x:]
         else:
             if animal_id ==starting_2:
                 time_2 = start_times_dict[animal_id]
-            
-    x = time_1[0]
-    y = time_2[0]
+                y = time_2[0]
+                data_baseline_2 = data[channel_number, y:]
+   
     
-    global data_baseline1
-    global data_baseline2
-
-    data_baseline1 = data[channel_number, x:]
-    data_baseline2 = data[channel_number, y:]
-    
-    return data_baseline1, data_baseline2, brain_state_1, brain_state_2
+    return data_baseline_1, data_baseline_2, brain_state_1, brain_state_2
 
 
 def load_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number):
@@ -89,32 +87,31 @@ def load_analysis_files_onebrainstate(path, animal_number, starting_times_dict, 
     for f in files:
         print(f)
 
-    for x in files:
-        if x.endswith('npy'):
-            data = np.load(x)
+    for raw_recording in files:
+        if raw_recording.endswith('npy'):
+            data = np.load(raw_recording)
 
-    for y in files:
-        if y.endswith('_1' + animal_number + '.pkl'):
-            global brain_state_1
-            brain_state_1 = pd.read_pickle(y)
+    global brain_state
+    for brain_state_file in files:
+        if brain_state_file.endswith(animal_number + '.pkl'):
+            brain_state = pd.read_pickle(brain_state_file)
 
     for animal_id in starting_times_dict:
         if animal_id == starting_1:
             global time_1
             time_1 = starting_times_dict[animal_id]
-
-    x = time_1[0]
+            starting_time = time_1[0]
 
     global data_baseline1
-    data_baseline1 = data[channel_number, x:]
+    data_baseline1 = data[channel_number, starting_time:]
 
-    return data_baseline1, brain_state_1, time_1
+    return data_baseline1, brain_state
 
 
 #the function below slices out indices from data file that correspond to brainstates
 
 
-def brainstate_times(brain_state_file, brainstate_number):
+def brainstate_times_REM_wake(brain_state_file, brainstate_number):
     
     #brainstate_number can be 0 - (wake), 1 - (nonREM) or 2 - REM
     
@@ -175,7 +172,78 @@ def brainstate_times(brain_state_file, brainstate_number):
     timevalues_array = np.hstack(timevalues_epochs)
         
 
-    return timevalues_array       
+    return timevalues_array   
+
+'''This function is only for nonREM epochs'''
+def brain_state_times_nonREM(brain_state_file, brain_state_number):
+    
+    x = int(250.4*5)
+    f1 = lambda a,b: list(range(a,b,x))
+
+    epoch_indices = []
+    epochs_above_five = []
+    
+    
+    if brain_state_number == 1:
+        non_REM = brain_state_file.iloc[:,0] == brain_state_number
+        nonREM_indices = (brain_state_file[non_REM]).index
+        epoch_indices = []
+        starting_index = nonREM_indices[0]
+        
+        for i in range(len(nonREM_indices)-1):
+            if nonREM_indices[i] + 1 != nonREM_indices[i+1]:
+                epoch_indices.append([starting_index, nonREM_indices[i]])
+                starting_index = nonREM_indices[i+1]
+
+        for epoch in epoch_indices:
+            epoch_length = epoch[1] - epoch[0]
+            if epoch_length >= 5:
+                epochs_above_five.append(epoch)
+                
+        new_epochs = []
+        for epoch in epochs_above_five:
+            start_epoch = epoch[0] + 2
+            end_epoch = epoch[1] - 2
+            new_epoch_pair = start_epoch, end_epoch
+            new_epochs.append(new_epoch_pair)
+        
+        time_start_values = []
+        time_end_values = []
+
+        for i in range(len(new_epochs)):
+            time_start_values.append(brain_state_file.iloc[new_epochs[i][0],1])
+    
+        for i in range(len(new_epochs)):
+            time_end_values.append(brain_state_file.iloc[new_epochs[i][1],2])
+        
+        return time_start_values, time_end_values
+        
+def timevalues_array_nonREM(time_start_values, time_end_values):
+        x = int(250.4*5)
+        f1 = lambda a,b: list(range(a,b,x))
+
+        zipped_timevalues_1 = zip(time_start_values, time_end_values)
+        time_values_1 = list(zipped_timevalues_1)
+        
+        #multiply each value by sampling rate and convert to integer to be able to access corresponding indices in 
+        samplerate_start= [element*250.4 for element in time_start_values]
+        samplerate_end = [element*250.4 for element in time_end_values]
+    
+        int_samplestart = [int(x) for x in samplerate_start]
+        int_sampleend = [int(x) for x in samplerate_end]
+    
+        zipped_timevalues = zip(int_samplestart, int_sampleend)
+        time_values = list(zipped_timevalues)
+        
+        #save map/lambda function to f1 and apply this function to each value in time values variable (separate into 5 second bins)
+        timevalues_epochs = list(map(lambda x: f1(x[0], x[1]), (time_values)))
+
+        #take them out of list of lists and have one long array with all the time values 
+        global timevalues_array
+        timevalues_array_float = np.hstack(timevalues_epochs)
+        timevalues_array = [int(value_float) for value_float in timevalues_array_float]
+        
+        return timevalues_array
 
 'this function filters out low-frequency drifts and frequencies above 50Hz'
 def highpass(raw_data):
@@ -241,27 +309,22 @@ def remove_noise(extracted_datavalues):
 'this function calculates psd via Welch method on data with noise artifacts removed'
 
 def psd_per_channel(data_without_noise):
-    
-    global psd
-    global frequency
-    psd = []
+
     welch_channel = []
-    #save one array of frequency values for plotting 
-    frequency = []
-
-    for i in range(len(data_without_noise)):
-        welch_channel.append(scipy.signal.welch(data_without_noise[i], fs=250.4, window='hann', nperseg=1252))
+    for data_array in data_without_noise:
+        welch_channel.append(scipy.signal.welch(data_array, fs=250.4, window='hann', nperseg=1252))
     
-
     #separate psd values from frequency values
-    for i in range(len(welch_channel)):
-        psd.append(welch_channel[i][1])
+    power_spectrum_list = []
+
+    for power_array in welch_channel:
+        power_spectrum_list.append(power_array[1])
     
-    
+     #save one array of frequency values for plotting 
+    frequency = []
     frequency = welch_channel[0][0]
         
-    
-    return psd, frequency
+    return welch_channel, power_spectrum_list, frequency
 
 'function below calculates line of best fit for psd of each epoch and returns the average slope intercept and gradient'
 def look_for_outliers(psd, frequency):

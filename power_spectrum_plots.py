@@ -13,42 +13,26 @@ import pickle
 import scipy.stats as stats
 import seaborn as sns
 
-from plotting_functions import check_availability, build_df
+from plotting_functions import check_availability, reformat_csv, build_df_to_plot, build_genotype_df
 
-
-#constants
-from constants import wildtypes_animal_ids, gap_animal_ids
+#variables to change for each plot
+savefig_name = "Channel_REM_ETX_2_brainstates.jpg"
+plot_title = 'ETX_REM'
 
 
 os.chdir('/home/melissa/Results/discarding_epoch_test')
-REM_ETX = pd.read_csv('2_S7063_test_psd_ETX_2_brainfiles.csv')
-nonREM_ETX = pd.read_csv('1_S7063_test_psd_ETX_2_brainfiles.csv')
-wake_ETX = pd.read_csv('0_S7063_test_psd_ETX_2.csv')
-
-REM_ETX = REM_ETX.iloc[0:250]
-REM_ETX = REM_ETX.drop('Unnamed: 0', axis=1)
-#REM_df = build_df(REM_ETX)
-print(REM_ETX)
-
-column_names = REM_ETX.columns
-
-for i in column_names[1:]:
-    print(i)
-
-#build dataframe to separate animals by columns
-#def build_df_columns(dataset):
- #   column_names = dataset.columns
-  #  for column_name in column_names[1:]:
-   #     print(column_name)
-    #    for frequency, power in zip(dataset['Frequency'], dataset[column_name]):
-    #        df = pd.DataFrame({'Channel': [column_name], 'Frequency': frequency, 'Power': power})
-    
 
 f, ax = plt.subplots(figsize=(10,6))
-sns.set_style("white") 
-sns.lineplot(x='Frequency', y='S7063_Chan4', dataset=REM_ETX)
+sns.set_style("white") #hue='Channel_Number', ci=95
+sns.lineplot(x='Frequency', y='Power', hue='Channel', ci=95, data = test)
 sns.despine()
 plt.yscale('log')
-plt.xlim(0.2,49)
+plt.xlim(1, 49)
 plt.ylim(10**-1, 10**2)
-plt.legend(title = 'REM')
+plt.legend(title = "ETX REM", labels = ['chan4', 'chan7', 'chan10', 'chan11'])
+plt.title("ETX REM")
+plt.xlabel("Frequency (Hz)")
+plt.ylabel('PSD [V**2/Hz]')
+#gap should be blue and wildtype black
+os.chdir('/home/melissa/Results/discarding_epoch_test/S7063_plots')
+plt.savefig("Channel_REM_ETX_2_brainstates.jpg")

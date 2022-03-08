@@ -9,56 +9,67 @@ import pandas as pd
 import os 
 
 
-'''simple function to prepare csv file for plotting'''
-def build_df_data(animal_ids, datafile, is_wild=False):
-    for animal_id in animal_ids:
-        for frequency, power in zip(datafile['Frequency'], datafile[animal_id]):
-            df_data = pd.DataFrame({'animal_id': animal_id, 'frequency': frequency, 'power':power, 'is_wild': is_wild})
-
-
+'''function to check whether an element exists in a list'''
 def check_availability(element, variables: iter):
     return element in variables
 
+'''function to reformat csv file to remove unwanted columns and only include values between 0:50Hz'''
+all_animals = pd.read_csv('2_animal2_test_psd_ETX_brainfiles.csv')
+all_animals= all_animals[0:250]
+all_animals = all_animals.drop('Unnamed: 0', axis=1)
+print(all_animals)
 
-def build_df(datafile):
-    '''function takes power csv file and reformats it into pd.DataFrame to plot with pandas'''
-    animal_ids = ['S7063','S7064', 'S7068', 'S7069', 'S7072', 'S7088', 'S7094', 'S7096','S7070', 'S7071', 'S7075', 'S7076', 'S7083', 'S7086', 'S7087','S7092', 'S7098', 'S7101', 'S7074', 'S7091']
-    channels = ['n4', 'n7', '10', '11']
-    animal_number = []
-    channel_number = []
 
-    #wildtypes = ['S7068', 'S7070', 'S7071', 'S7074', 'S7086', 'S7087', 'S7091', 'S7098', 'S7101']
-    gaps = ['S7063', 'S7064', 'S7069', 'S7072', 'S7075', 'S7076', 'S7088', 'S7092', 'S7094', 'S7096']
+'''This function takes raw results csv file and removes unwanted columns and rows'''
+def reformat_csv(csv_file_name):
+    raw_csv = pd.read_csv(csv_file_name)
+    reformat_rows = raw_csv[0:250]
+    column_names = reformat_rows.columns
+    for column in column_names:
+        if column == 'Unnamed: 0':
+            reformatted_file = reformat_rows.drop('Unnamed: 0', axis=1)
+    
+    return reformatted_file 
+
+
+'''This function takes reformatted csv file and builds a dataframe which can be plotted with seaborn'''
+def build_df_to_plot(reformatted_file):
+
+    frequency_percolumn = []
+    power_percolumn = []
+    column_name = []
+    animal_id = []
+
+    column_names = reformatted_file.columns
+    for column in column_names[1:]:
+        for frequency, power in zip(all_animals['Frequency'], reformatted_file[column]):
+            frequency_percolumn.append(frequency)
+            power_percolumn.append(power)
+            column_name.append(column[-7:])
+            animal_id.append(column[0:5])
+
+    results = pd.DataFrame({'Animal_ID': animal_id, 'Frequency': frequency_percolumn, 'Power': power_percolumn, 
+                        'Channel': column_name}) 
+
+    return results
+
+'''This function takes dataframe and adds a column with genotypes to the dataframe'''
+def build_genotype_df(results_dataframe):
+    animal_numbers = results_dataframe['Animal_ID']
+    animal_numbers = list(animal_numbers)
+    
     genotype = []
-    frequency = []
-    power = []
 
-    column_names = datafile.columns
+    gaps = ['S7063', 'S7064', 'S7069', 'S7072', 'S7075', 'S7076', 'S7088', 'S7092', 'S7094', 'S7096']
+    
+    for animal in animal_numbers:
+        if check_availability(animal, gaps) == True:
+            genotype.append('GAP')
+        else:
+            genotype.append('WT')
 
-    #animal_id
-    for column in range(len(column_names)):
-        str_column = str(column)
-        for animal in animal_ids:
-            if column.startswith(animal):
-                animal_number.append([animal]*250)
-                frequency.append(datafile.loc[:,'Frequency'])
-                power.append(datafile.loc[:,column])
-                if check_availability(animal, gaps) == True:
-                    genotype.append(["GAP"]*250)
-                else:
-                    genotype.append(["WT"]*250)
-            for channel in channels:
-                if str_column[-2:] == channel:
-                    channel_number.append([channel])
-
-        animal_number = [item for sublist in animal_number for item in sublist]
-        channel_number =  [item for sublist in channel_number for item in sublist]
-        print(channel_number)
-
-        print(len(animal_number))
-        print(len(channel_number))
-        print(len(genotype))
-        print(len(frequency))
-        print(len(power))
-
-        results_dataframe = pd.DataFrame({'Animal_ID':animal_number, 'Channel_Number': channel_number, 'Genotype': genotype, 'Frequency': frequency, 'Power': power})
+    genotype_df = pd.DataFrame({'Genotype': genotype})
+    
+    final_dataframe = results_dataframe.join(genotype_df)
+    
+    return final_dataframe
