@@ -37,19 +37,19 @@ def load_analysis_files(path, animal_number, start_times_dict, channel_number):
         print(f)
 
     #load data corresponding to animal number
-    for x in files:
-        if x.endswith('npy'):
-            data = np.load(x)
+    for raw_recording in files:
+        if raw_recording.endswith('npy'):
+            data = np.load(raw_recording)
 
     #finding brain state files 
-    for y in files:
-        if y.endswith('1_' + animal_number + '.pkl'):
+    for brain_state_file in files:
+        if brain_state_file.endswith('1_' + animal_number + '.pkl'):
             global brain_state_1
             global brain_state_2
-            brain_state_1 = pd.read_pickle(y)
+            brain_state_1 = pd.read_pickle(brain_state_file)
         else:
             if y.endswith('2_' + animal_number + '.pkl'):
-                brain_state_2 = pd.read_pickle(y)
+                brain_state_2 = pd.read_pickle(brain_state_file)
     
 
     #finding start times for specific animal from start_times dictionary 
@@ -58,16 +58,16 @@ def load_analysis_files(path, animal_number, start_times_dict, channel_number):
     global data_baseline2
     for animal_id in start_times_dict:
         if animal_id == starting_1:
-            global time_1
-            global time_2
+            global starting_time_1
+            global starting_time_2
             time_1 = start_times_dict[animal_id]
-            x = time_1[0]
-            data_baseline_1 = data[channel_number, x:]
+            starting_time_1 = time_1[0]
+            data_baseline_1 = data[channel_number, starting_time_1:]
         else:
             if animal_id ==starting_2:
                 time_2 = start_times_dict[animal_id]
-                y = time_2[0]
-                data_baseline_2 = data[channel_number, y:]
+                starting_time_2 = time_2[0]
+                data_baseline_2 = data[channel_number, starting_time_2:]
    
     
     return data_baseline_1, data_baseline_2, brain_state_1, brain_state_2
@@ -99,6 +99,7 @@ def load_analysis_files_onebrainstate(path, animal_number, starting_times_dict, 
     for animal_id in starting_times_dict:
         if animal_id == starting_1:
             global time_1
+            global starting_time
             time_1 = starting_times_dict[animal_id]
             starting_time = time_1[0]
 
@@ -117,8 +118,8 @@ def brainstate_times_REM_wake(brain_state_file, brainstate_number):
     
     #functions required for automated script
     #5 second bin definition
-    x = int(250.4*5)
-    f1 = lambda a,b: list(range(a,b,x))
+    sample_rate = int(250.4*5)
+    f1 = lambda a,b: list(range(a,b,sample_rate))
 
 
     query = brain_state_file.iloc[:,0] == brainstate_number #REM is 2
@@ -132,10 +133,10 @@ def brainstate_times_REM_wake(brain_state_file, brainstate_number):
     epoch_indices = []
     starting_index = all_indices[0]
         
-    for i in range(len(all_indices)-1):
-        if all_indices[i] + 1 != all_indices[i+1]:
-            epoch_indices.append([starting_index, all_indices[i]])
-            starting_index = all_indices[i+1]
+    for epoch_index in range(len(all_indices)-1):
+        if all_indices[epoch_index] + 1 != all_indices[epoch_index +1]:
+            epoch_indices.append([starting_index, all_indices[epoch_index]])
+            starting_index = all_indices[epoch_index+1]
                 
     #need to append the last value outside of the loop as loop is for len -1
     epoch_indices.append([starting_index, all_indices[-1]])
@@ -144,12 +145,12 @@ def brainstate_times_REM_wake(brain_state_file, brainstate_number):
     time_start_values = []
     time_end_values = []
 
-    for i in range(len(epoch_indices)):
-        time_start_values.append(brain_state_file.iloc[epoch_indices[i][0],1])
+    for epoch_index in range(len(epoch_indices)):
+        time_start_values.append(brain_state_file.iloc[epoch_indices[epoch_index][0],1])
     
 
-    for i in range(len(epoch_indices)):
-        time_end_values.append(brain_state_file.iloc[epoch_indices[i][1],2])
+    for epoch_index in range(len(epoch_indices)):
+        time_end_values.append(brain_state_file.iloc[epoch_indices[epoch_index][1],2])
         
     zipped_timevalues = zip(time_start_values, time_end_values)
     time_values = list(zipped_timevalues)
@@ -177,8 +178,8 @@ def brainstate_times_REM_wake(brain_state_file, brainstate_number):
 '''This function is only for nonREM epochs'''
 def brain_state_times_nonREM(brain_state_file, brain_state_number):
     
-    x = int(250.4*5)
-    f1 = lambda a,b: list(range(a,b,x))
+    sample_rate = int(250.4*5)
+    f1 = lambda a,b: list(range(a,b,sample_rate))
 
     epoch_indices = []
     epochs_above_five = []
@@ -210,17 +211,17 @@ def brain_state_times_nonREM(brain_state_file, brain_state_number):
         time_start_values = []
         time_end_values = []
 
-        for i in range(len(new_epochs)):
-            time_start_values.append(brain_state_file.iloc[new_epochs[i][0],1])
+        for time_start_epoch in range(len(new_epochs)):
+            time_start_values.append(brain_state_file.iloc[new_epochs[time_start_epoch][0],1])
     
-        for i in range(len(new_epochs)):
-            time_end_values.append(brain_state_file.iloc[new_epochs[i][1],2])
+        for time_end_epoch in range(len(new_epochs)):
+            time_end_values.append(brain_state_file.iloc[new_epochs[time_end_epoch][1],2])
         
         return time_start_values, time_end_values
         
 def timevalues_array_nonREM(time_start_values, time_end_values):
-        x = int(250.4*5)
-        f1 = lambda a,b: list(range(a,b,x))
+        sample_rate = int(250.4*5)
+        f1 = lambda a,b: list(range(a,b,sample_rate))
 
         zipped_timevalues_1 = zip(time_start_values, time_end_values)
         time_values_1 = list(zipped_timevalues_1)
@@ -275,13 +276,12 @@ def channel_data_extraction(timevalues_array, data_file):
     global extracted_datavalues
     extracted_datavalues = []
     
-    for i in range(len(timevalues_array)):
-        a = timevalues_array[i]
-        k = timevalues_array[i] + 1252
-        extracted_datavalues.append(data_file[a:k])
+    for time_value in range(len(timevalues_array)):
+        start_time_bin = timevalues_array[time_value]
+        end_time_bin = timevalues_array[time_value] + 1252
+        extracted_datavalues.append(data_file[start_time_bin:end_time_bin])
 
     return extracted_datavalues
-
 
 
 'this function removes epochs with data values that exceed 4000'
