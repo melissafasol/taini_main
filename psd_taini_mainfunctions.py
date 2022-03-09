@@ -48,14 +48,14 @@ def load_analysis_files(path, animal_number, start_times_dict, channel_number):
             global brain_state_2
             brain_state_1 = pd.read_pickle(brain_state_file)
         else:
-            if y.endswith('2_' + animal_number + '.pkl'):
+            if brain_state_file.endswith('2_' + animal_number + '.pkl'):
                 brain_state_2 = pd.read_pickle(brain_state_file)
     
 
     #finding start times for specific animal from start_times dictionary 
     global animal_id
     global data_baseline1
-    global data_baseline2
+    global data_baseline_2
     for animal_id in start_times_dict:
         if animal_id == starting_1:
             global starting_time_1

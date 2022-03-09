@@ -65,8 +65,8 @@ for animal in animal_two_numpy_file:
     merged_2_psd = pd.concat(ETX_2_numpyfiles, axis = 1)
     merged_2_spectralslope = pd.concat(ETX_slope_intercept_2, axis=1)
     os.chdir('/home/melissa/Results/nonREM_test_new_analysis')
-    merged_2_psd.to_csv(str(brain_state_number) + 'allanimals_test_newnonREM_psd_ETX.csv', index=True)
-    #merged_2_spectralslope.to_csv(str(brain_state_number) + '_spectralslope_ETX.csv', index=True)
+    merged_2_psd.to_csv(str(brain_state_number) + 'allanimals_newnonREM_psd_ETX.csv', index=True)
+    merged_2_spectralslope.to_csv(str(brain_state_number) + 'allanimals_newnonREM_spectralslope_ETX.csv', index=True)
 
 path = '/home/melissa/preprocessing/reformatted_brainstates_ETX'
 ETX_1_numpyfile = []
@@ -107,6 +107,5 @@ for animal in animal_one_numpy_file:
     merged_1_psd = pd.concat(ETX_1_numpyfile, axis = 1)
 
 os.chdir('/home/melissa/Results/discarding_epoch_test')
-merged_1_psd.to_csv(str(brain_state_number) 
-            + '_psd_ETX_1.csv', index=True)
-merged_1_spectralslope.to_csv(str(brain_state_number) + '_spectralslope_ETX.csv', index=True)
+merged_1_psd.to_csv(str(brain_state_number) + 'nonREM_newanalysis_psd_ETX_1.csv', index=True)
+merged_1_spectralslope.to_csv(str(brain_state_number) + '_nonREM_newanalysis_spectralslope_ETX.csv', index=True)

@@ -22,12 +22,12 @@ from pandas import ExcelWriter
 path = '/home/melissa/preprocessing/numpyformat_baseline'
 
 animal_number_two_brainstates = ['S7063', 'S7064', 'S7069', 'S7071', 'S7086', 'S7091', 'S7092'] #'S7070'
-animal_number_one_brainstate = ['S7068', 'S7074', 'S7075', 'S7076','S7088', 'S7094', 'S7098', 'S7068', 'S7101'] #S7072 #S7096 #S7087
+animal_number_one_brainstate = ['S7068', 'S7074', 'S7075', 'S7076','S7088', 'S7094', 'S7098', 'S7101'] #S7072 #S7096 #S7087
 seizure_two_brainstates = ['S7063', 'S7064', 'S7069', 'S7072']
 seizure_one_brainstate = ['S7074', 'S7075', 'S7088', 'S7092', 'S7094']
 
 channel_numbers = [4,7,10,11]
-brain_state_number = 1
+brain_state_number = 2
 
 'all empty lists below'
 small_dfs_two_brainstates = []
@@ -39,7 +39,7 @@ frequency_df = pd.DataFrame({'Frequency': frequency_values})
 small_dfs_two_brainstates.append(frequency_df)
 small_dfs_one_brainstate.append(frequency_df)
 
-'''
+
 'loop below calculates psd average per channel for every number in two_brainstates list'
 for animal in animal_number_two_brainstates:
     for channel in channel_numbers:
@@ -75,6 +75,8 @@ for animal in animal_number_two_brainstates:
         str(animal) + '_' + str(channel) + 'intercept' + str(brain_state_number): intercept_epochs_1})
         data_2 = pd.DataFrame({str(animal) + '_chan_' + str(channel) + '_slope_'+ str(brain_state_number): slope_epochs_2, 
         str(animal) + '_' + str(channel) + 'intercept' + str(brain_state_number): intercept_epochs_2})
+        slopegradient_intercept_2_brainstate.append(data_1)
+        slopegradient_intercept_2_brainstate.append(data_2)
         psd_average_1 = psd_average(psd_cleaned_1, frequency, animal)
         list_mean_1 = list(psd_average_1)
         psd_average_2 = psd_average(psd_cleaned_2, frequency, animal)
@@ -86,7 +88,7 @@ for animal in animal_number_two_brainstates:
         df_1[animal] = col.mean(axis = 1)
         average_p = df_1.loc[:, animal]
         power_dataframe = pd.DataFrame({animal + '_chan_' + str(channel): average_p})
-    
+        small_dfs_two_brainstates.append(power_dataframe)
         ##fig = plt.figure()
         ##plt.semilogy(frequency, average_p)
         ##plt.xlabel('frequency [Hz]')
@@ -99,15 +101,27 @@ for animal in animal_number_two_brainstates:
         #small_dfs_two_brainstates.append(power_dataframe)
         #slopegradient_intercept_2_brainstate.append(data_1)
         #slopegradient_intercept_2_brainstate.append(data_2)
-'''
+
 
 os.chdir('/home/melissa/Results/')
 
-#merged_two_brainstates = pd.concat(small_dfs_two_brainstates, axis=1)
-#merged_gradient_intercept = pd.concat(slopegradient_intercept_2_brainstate, axis=1)
+os.chdir('/home/melissa/all_taini_melissa/')
+merged_two_brainstates = pd.concat(small_dfs_two_brainstates, axis=1)
+merged_gradient_2 = pd.concat(slopegradient_intercept_2_brainstate, axis=1)
 
-#merged_two_brainstates.to_csv('baseline_nonREM_epoch_test_2npyfiles.csv', index = True)
-#merged_gradient_intercept.to_csv('baseline_slopeintercept_2_brainstate.csv', index=True)
+
+if brain_state_number == 1:
+    merged_two_brainstates.to_csv('baseline_nonREM_epoch_2npyfile.csv', index=True)
+    merged_gradient_2.to_csv('baseline_nonREM_slopeintercept_2npyfile.csv', index=True)
+
+if brain_state_number == 0:
+    merged_two_brainstates.to_csv('baseline_wake_epoch_2npyfile.csv', index=True)
+    merged_gradient_2.to_csv('baseline_wake_slopeintercept_2npyfile.csv', index=True)
+
+if brain_state_number == 2:
+    merged_two_brainstates.to_csv('baseline_REM_epoch_2npyfile.csv', index=True)
+    merged_gradient_2.to_csv('baseline_REM_slopeintercept_2npyfile.csv', index=True)
+
 
 os.chdir('/home/melissa/preprocessing/numpyformat_baseline')
 for animal in animal_number_one_brainstate:
@@ -143,5 +157,15 @@ merged_one_brainstate = pd.concat(small_dfs_one_brainstate, axis=1)
 merged_gradient_1= pd.concat(slopegradient_intercept_1_brainstate, axis=1)
 
 os.chdir('/home/melissa/Results')
-merged_one_brainstate.to_csv('baseline_nonREM_epoch_test_1npyfile.csv', index=True)
-merged_gradient_1.to_csv('baseline_slopeintercept_1_brainstate.csv', index=True)
+
+if brain_state_number == 1:
+    merged_one_brainstate.to_csv('baseline_nonREM_epoch_test_1npyfile.csv', index=True)
+    merged_gradient_1.to_csv('baseline_nonREM_slopeintercept_1npyfile.csv', index=True)
+
+if brain_state_number == 0:
+    merged_one_brainstate.to_csv('baseline_wake_epoch_test_1npyfile.csv', index=True)
+    merged_gradient_1.to_csv('baseline_wake_slopeintercept_1npyfile.csv', index=True)
+
+if brain_state_number == 2:
+    merged_one_brainstate.to_csv('baseline_REM_epoch_test_1npyfile.csv', index=True)
+    merged_gradient_1.to_csv('baseline_REM_slopeintercept_1npyfile.csv', index=True)
