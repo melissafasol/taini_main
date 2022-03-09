@@ -172,8 +172,8 @@ for condition in recording_condition:
                     small_dfs_one_brainstate.append(results)
                     slopegradient_intercept_1_brainstate.append(data)
 
-        #merged_power_file, merged_gradient_file = concatenate_files(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate)
-        #save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, recording_condition)
+        merged_power_file, merged_gradient_file = concatenate_files(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate)
+        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, recording_condition)
         merged_power_file, merged_gradient_file = concatenate_files(small_dfs_one_brainstate, slopegradient_intercept_1_brainstate)
         save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, condition)
     
