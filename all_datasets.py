@@ -2,8 +2,8 @@
 
 from psd_taini_mainfunctions import load_analysis_files, brainstate_times_REM_wake, brain_state_times_nonREM, timevalues_array_nonREM, highpass
 from psd_taini_mainfunctions import channel_data_extraction, load_analysis_files_onebrainstate, look_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
-from saline_functions import concatenate_saline_data, one_numpy_saline
-from ETX_functions import concatenate_ETX_data, one_numpy_ETX
+from Individual_Recording_Conditions.saline_functions import concatenate_saline_data, one_numpy_saline
+from Individual_Recording_Conditions.ETX_functions import concatenate_ETX_data, one_numpy_ETX
 from constants import start_times_baseline, start_times_saline, start_times_ETX, baseline_recording_dictionary, saline_recording_dictionary, ETX_recording_dictionary
 from save_functions import concatenate_files, save_files
 
@@ -43,7 +43,7 @@ for condition in recording_condition:
     
     if condition == 'baseline':
         for brain_state in brain_state_number:
-            '''
+            
             for animal in baseline_recording_dictionary['animal_two_brainstates']:
                 for channel in channel_numbers:
                     data_baseline1, data_baseline2, brain_state_file_1, brain_state_file_2 = load_analysis_files(baseline_recording_dictionary['path'], animal, start_times_baseline, channel)
@@ -72,10 +72,10 @@ for condition in recording_condition:
                     psd_cleaned_2 = remove_epochs(intercept_epochs_remove_2, slope_epochs_remove_2, psd_2)
                     slope_epochs_1, intercept_epochs_1 = plot_lin_reg(psd_cleaned_1, frequency)
                     slope_epochs_2, intercept_epochs_2 = plot_lin_reg(psd_cleaned_2, frequency)
-                    data_1 = pd.DataFrame({str(animal) + '_chan_' + str(channel) + '_slope_'+ str(brain_state): slope_epochs_1, 
-                    str(animal) + '_' + str(channel) + 'intercept' + str(brain_state): intercept_epochs_1})
-                    data_2 = pd.DataFrame({str(animal) + '_chan_' + str(channel) + '_slope_'+ str(brain_state): slope_epochs_2, 
-                    str(animal) + '_' + str(channel) + 'intercept' + str(brain_state): intercept_epochs_2})
+                    data_1 = pd.DataFrame(data = {str(brain_state) + '_' + str(animal) + '_chan_' + str(channel) + '_slope': slope_epochs_1, 
+                    str(brain_state) + '_' + str(animal) + '_' + str(channel) + '_intercept': intercept_epochs_1})
+                    data_2 = pd.DataFrame(data = {str(brain_state) + '_' + str(animal) + '_chan_' + str(channel) + '_slope': slope_epochs_2, 
+                    str(brain_state) + '_' + str(animal) + '_' + str(channel) + '_intercept': intercept_epochs_2})
                     slopegradient_intercept_2_brainstate.append(data_1)
                     slopegradient_intercept_2_brainstate.append(data_2)
                     psd_average_1 = psd_average(psd_cleaned_1, frequency, animal)
@@ -88,9 +88,9 @@ for condition in recording_condition:
                     col = df_1.loc[:, "Power_1":"Power_2"]
                     df_1[animal] = col.mean(axis = 1)
                     average_p = df_1.loc[:, animal]
-                    power_dataframe = pd.DataFrame({animal + '_chan_' + str(channel): average_p})
+                    power_dataframe = pd.DataFrame( data = {str(brain_state) + animal + '_chan_' + str(channel):average_p})
                     small_dfs_two_brainstates.append(power_dataframe)
-'''
+
             for animal in baseline_recording_dictionary['animal_one_brainstate']:
                 for channel in channel_numbers:
                     data_baseline1, brain_state_file = load_analysis_files_onebrainstate(baseline_recording_dictionary['path'], animal, start_times_baseline, channel)
@@ -110,16 +110,16 @@ for condition in recording_condition:
                     slope_epochs, intercept_epochs = plot_lin_reg(psd_cleaned_1, frequency)
                     psd_average_1 = psd_average(psd_cleaned_1, frequency, animal)
                     list_average_1 = list(psd_average_1) 
-                    results = pd.DataFrame(data = {animal + '_chan_' + str(channel):list_average_1})
-                    data = pd.DataFrame({str(animal) + '_chan_' + str(channel) + '_slope_'+ str(brain_state): slope_epochs, 
-                    str(animal) + '_' + str(channel) + 'intercept' + str(brain_state): intercept_epochs})
+                    results = pd.DataFrame(data = {str(brain_state) + animal + '_chan_' + str(channel):list_average_1})
+                    data = pd.DataFrame({str(brain_state) + '_' + str(animal) + '_chan_' + str(channel) + '_slope': slope_epochs, 
+                    str(brain_state) + '_' + str(animal) + '_' + str(channel) + '_intercept': intercept_epochs})
                     small_dfs_one_brainstate.append(results)
                     slopegradient_intercept_1_brainstate.append(data)
 
         merged_power_file, merged_gradient_file = concatenate_files(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate)
-        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, recording_condition)
+        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, condition)
         merged_power_file, merged_gradient_file = concatenate_files(small_dfs_one_brainstate, slopegradient_intercept_1_brainstate)
-        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, recording_condition)
+        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, condition)
 
     if condition == 'saline':
         for brain_state in brain_state_number:
@@ -132,9 +132,9 @@ for condition in recording_condition:
                     else:
                         timevalues = brainstate_times_REM_wake(brain_state_file, brain_state)
                     filtered_data = highpass(concatenate_data)
-                    datavalues = channel_data_extraction(timevalues, filtered)
+                    datavalues = channel_data_extraction(timevalues, filtered_data)
                     withoutartifacts, removing_duplicates = remove_noise(datavalues)
-                    #withoutartifacts = withoutartifacts[0]
+                    withoutartifacts = withoutartifacts[0]
                     welch_channel, psd, frequency = psd_per_channel(withoutartifacts)
                     power_list = [power_array[1] for power_array in welch_channel]
                     intercept_epochs_remove, slope_epochs_remove = look_for_outliers(power_list, frequency)
@@ -142,9 +142,9 @@ for condition in recording_condition:
                     slope_epochs, intercept_epochs = plot_lin_reg(psd_cleaned_1, frequency)
                     psd_average_1 = psd_average(psd_cleaned_1, frequency, animal)
                     list_average_1 = list(psd_average_1) 
-                    results = pd.DataFrame(data = {animal + '_chan_' + str(channel):list_average_1})
-                    data = pd.DataFrame({str(animal) + '_chan_' + str(channel) + '_slope_'+ str(brain_state): slope_epochs, 
-                    str(animal) + '_' + str(channel) + 'intercept' + str(brain_state): intercept_epochs})
+                    results = pd.DataFrame(data = {str(brain_state) + animal + '_chan_' + str(channel):list_average_1})
+                    data = pd.DataFrame(data = {str(brain_state) + '_' + str(animal) + '_chan_' + str(channel) + '_slope': slope_epochs, 
+                    str(brain_state) + '_' + str(animal) + '_' + str(channel) + '_intercept': intercept_epochs})
                     small_dfs_one_brainstate.append(results)
                     slopegradient_intercept_1_brainstate.append(data)
             
@@ -159,22 +159,23 @@ for condition in recording_condition:
                     filtered_data = highpass(concatenate_data)
                     datavalues = channel_data_extraction(timevalues, filtered_data)
                     without_artifacts = remove_noise(datavalues)
-                    psd, frequency = psd_per_channel(without_artifacts)
+                    without_artifacts = without_artifacts[0]
+                    welch_channel, psd, frequency = psd_per_channel(without_artifacts)
                     intercept_epochs_remove, slope_epochs_remove = look_for_outliers(psd, frequency)
                     psd_clean = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
                     slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
-                    psd_average_1 = psd_average(psd_cleaned_1, frequency, animal)
+                    psd_average_1 = psd_average(psd_clean, frequency, animal)
                     list_average_1 = list(psd_average_1) 
-                    results = pd.DataFrame(data = {animal + '_chan_' + str(channel):list_average_1})
-                    data = pd.DataFrame({str(animal) + '_chan_' + str(channel) + '_slope_'+ str(brain_state): slope_epochs, 
-                    str(animal) + '_' + str(channel) + 'intercept' + str(brain_state): intercept_epochs})
+                    results = pd.DataFrame(data = {str(brain_state) + animal + '_chan_' + str(channel):list_average_1})
+                    data = pd.DataFrame(data = {str(brain_state) + '_' + str(animal) + '_chan_' + str(channel) + '_slope': slope_epochs, 
+                    str(brain_state) + '_' + str(animal) + '_' + str(channel) + '_intercept': intercept_epochs})
                     small_dfs_one_brainstate.append(results)
                     slopegradient_intercept_1_brainstate.append(data)
 
-        merged_power_file, merged_gradient_file = concatenate_files(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate)
-        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, recording_condition)
+        #merged_power_file, merged_gradient_file = concatenate_files(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate)
+        #save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, recording_condition)
         merged_power_file, merged_gradient_file = concatenate_files(small_dfs_one_brainstate, slopegradient_intercept_1_brainstate)
-        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, recording_condition)
+        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, condition)
     
     if condition == 'ETX':
         for brain_state in brain_state_number:
@@ -189,15 +190,16 @@ for condition in recording_condition:
                         filtered_data = highpass(concatenate_data)
                     datavalues = channel_data_extraction(timevalues, filtered_data)
                     without_artifacts = remove_noise(datavalues)
-                    psd, frequency = psd_per_channel(without_artifacts)
+                    without_artifacts = without_artifacts[0]
+                    welch_channel, psd, frequency = psd_per_channel(without_artifacts)
                     intercept_epochs_remove, slope_epochs_remove = look_for_outliers(psd, frequency)
                     psd_clean = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
                     slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
-                    psd_average_1 = psd_average(psd_cleaned_1, frequency, animal)
+                    psd_average_1 = psd_average(psd_clean, frequency, animal)
                     list_average_1 = list(psd_average_1) 
-                    results = pd.DataFrame(data = {animal + '_chan_' + str(channel):list_average_1})
-                    data = pd.DataFrame({str(animal) + '_chan_' + str(channel) + '_slope_'+ str(brain_state): slope_epochs, 
-                    str(animal) + '_' + str(channel) + 'intercept' + str(brain_state): intercept_epochs})
+                    results = pd.DataFrame(data = {str(brain_state) + animal + '_chan_' + str(channel):list_average_1})
+                    data = pd.DataFrame(data = {str(brain_state) + '_' + str(animal) + '_chan_' + str(channel) + '_slope': slope_epochs, 
+                    str(brain_state) + '_' + str(animal) + '_' + str(channel) + '_intercept': intercept_epochs})
                     small_dfs_one_brainstate.append(results)
                     slopegradient_intercept_1_brainstate.append(data)
 
@@ -212,19 +214,20 @@ for condition in recording_condition:
                         filtered_data = highpass(concatenate_data)
                     datavalues = channel_data_extraction(timevalues, filtered_data)
                     without_artifacts = remove_noise(datavalues)
-                    psd, frequency = psd_per_channel(without_artifacts)
+                    without_artifacts = without_artifacts[0]
+                    welch_channel, psd, frequency = psd_per_channel(without_artifacts)
                     intercept_epochs_remove, slope_epochs_remove = look_for_outliers(psd, frequency)
                     psd_clean = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
                     slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
-                    psd_average_1 = psd_average(psd_cleaned_1, frequency, animal)
+                    psd_average_1 = psd_average(psd_clean, frequency, animal)
                     list_average_1 = list(psd_average_1) 
-                    results = pd.DataFrame(data = {animal + '_chan_' + str(channel):list_average_1})
-                    data = pd.DataFrame({str(animal) + '_chan_' + str(channel) + '_slope_'+ str(brain_state): slope_epochs, 
-                    str(animal) + '_' + str(channel) + 'intercept' + str(brain_state): intercept_epochs})
+                    results = pd.DataFrame(data = {str(brain_state) + animal + '_chan_' + str(channel):list_average_1})
+                    data = pd.DataFrame(data = {str(brain_state) + '_' + str(animal) + '_chan_' + str(channel) + '_slope': slope_epochs, 
+                    str(brain_state) + '_' + str(animal) + '_' + str(channel) + '_intercept': intercept_epochs})
                     small_dfs_one_brainstate.append(results)
                     slopegradient_intercept_1_brainstate.append(data)
 
         merged_power_file, merged_gradient_file = concatenate_files(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate)
-        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, recording_condition)
+        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, condition)
         merged_power_file, merged_gradient_file = concatenate_files(small_dfs_one_brainstate, slopegradient_intercept_1_brainstate)
-        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, recording_condition)
+        save_files(directory_name, merged_power_file, merged_gradient_file, brain_state, condition)

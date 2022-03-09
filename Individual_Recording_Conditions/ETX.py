@@ -21,7 +21,7 @@ from psd_taini_mainfunctions import  brainstate_times_REM_wake, brain_state_time
 from psd_taini_mainfunctions import highpass, channel_data_extraction, look_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
 from constants import start_times_ETX, channels_dict, genotype_per_animal
 
-from ETX_functions import concatenate_ETX_data, one_numpy_ETX
+from Individual_Recording_Conditions.ETX_functions import concatenate_ETX_data, one_numpy_ETX
 
 animal_two_numpy_file = ['S7063','S7064', 'S7068', 'S7069', 'S7072', 'S7088', 'S7094', 'S7096'] 
 animal_one_numpy_file = ['S7070', 'S7071', 'S7075', 'S7076', 'S7083', 'S7086', 'S7087','S7092', 'S7098', 'S7101', 'S7074', 'S7091']

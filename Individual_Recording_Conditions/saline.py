@@ -13,9 +13,9 @@ from scipy.fft import fft, fftfreq
 import scipy 
 from scipy import signal 
 import re
-from ETX_functions import one_numpy_ETX
+from Individual_Recording_Conditions.ETX_functions import one_numpy_ETX
 
-from saline_functions import start_saline_dict, concatenate_saline_data, one_numpy_saline
+from Individual_Recording_Conditions.saline_functions import start_saline_dict, concatenate_saline_data, one_numpy_saline
 
 from numpy.core.fromnumeric import mean
 from numpy.lib.function_base import average
