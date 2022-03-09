@@ -40,8 +40,10 @@ for condition in recording_condition:
     frequency_df = pd.DataFrame({'Frequency': frequency_values})
     small_dfs_two_brainstates.append(frequency_df)
     small_dfs_one_brainstate.append(frequency_df)
+    
     if condition == 'baseline':
         for brain_state in brain_state_number:
+            '''
             for animal in baseline_recording_dictionary['animal_two_brainstates']:
                 for channel in channel_numbers:
                     data_baseline1, data_baseline2, brain_state_file_1, brain_state_file_2 = load_analysis_files(baseline_recording_dictionary['path'], animal, start_times_baseline, channel)
@@ -88,8 +90,8 @@ for condition in recording_condition:
                     average_p = df_1.loc[:, animal]
                     power_dataframe = pd.DataFrame({animal + '_chan_' + str(channel): average_p})
                     small_dfs_two_brainstates.append(power_dataframe)
-
-            for animal in baseline_recording_dictionary['animal_number_one_brainstate']:
+'''
+            for animal in baseline_recording_dictionary['animal_one_brainstate']:
                 for channel in channel_numbers:
                     data_baseline1, brain_state_file = load_analysis_files_onebrainstate(baseline_recording_dictionary['path'], animal, start_times_baseline, channel)
                     if brain_state == 1:
@@ -121,7 +123,7 @@ for condition in recording_condition:
 
     if condition == 'saline':
         for brain_state in brain_state_number:
-            for animal in saline_recording_dictionary['animal_two_numpy_file']:
+            for animal in saline_recording_dictionary['animal_two_numpy_files']:
                 for channel in channel_numbers:
                     concatenate_data, brain_state_file = concatenate_saline_data(saline_recording_dictionary['path'], channel, animal, start_times_saline)
                     if brain_state == 1:
@@ -176,7 +178,7 @@ for condition in recording_condition:
     
     if condition == 'ETX':
         for brain_state in brain_state_number:
-            for animal in ETX_recording_dictionary['animal_two_numpy_file']:
+            for animal in ETX_recording_dictionary['animal_two_numpy_files']:
                 for channel in channel_numbers:
                     concatenate_data, brain_state_file = concatenate_ETX_data(ETX_recording_dictionary['path'], channel, animal, start_times_ETX)
                     if brain_state == 1:
