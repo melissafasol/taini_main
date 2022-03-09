@@ -41,17 +41,23 @@ saline_2_numpyfiles.append(frequency_df)
 
 
 for animal in saline_two_numpy_file:
+    if brain_state_number == 1:
+            time_start_values, time_end_values = brain_state_times_nonREM(brain_state, brain_state_number)
+            timevalues = timevalues_array_nonREM(time_start_values, time_end_values)
+
+    else:
+        timevalues = brainstate_times_REM_wake(brain_state, brain_state_number)
     concatenate_data, brain_state = concatenate_saline_data(path, channel_number, animal_number= animal, start_saline_dict = start_saline_dict)
     time_values = brainstate_times(brain_state, brain_state_number)
     filtered_data = highpass(concatenate_data)
-    datavalues = channel_data_extraction(time_values, filtered_data)
-    without_artifacts = remove_noise(datavalues)
-    psd, frequency = psd_per_channel(without_artifacts)
-    intercept_epochs_remove, slope_epochs_remove = look_for_outliers(psd, frequency)
-    psd_clean = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
-    slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
-    psd_average_results = psd_average(psd_clean, frequency, animal)
-    list_mean = list(psd_average_results)
+        datavalues = channel_data_extraction(time_values, filtered_data)
+        without_artifacts = remove_noise(datavalues)
+        psd, frequency = psd_per_channel(without_artifacts)
+        intercept_epochs_remove, slope_epochs_remove = look_for_outliers(psd, frequency)
+        psd_clean = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
+        slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
+        psd_average_results = psd_average(psd_clean, frequency, animal)
+        list_mean = list(psd_average_results)
     slope_intercept_df = pd.DataFrame(data = {'animal_number':[animal]*len(slope_epochs), 'slope': slope_epochs, 'Intercept':intercept_epochs})
     saline_slope_intercept_2.append(slope_intercept_df)
     results = pd.DataFrame(data = {animal:list_mean})
