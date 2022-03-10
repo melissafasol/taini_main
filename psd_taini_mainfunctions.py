@@ -17,99 +17,51 @@ from scipy.fft import fft, fftfreq
 import scipy
 from scipy import signal
 import re
+import itertools
 
 #Load files, brainstate, starting times per animal and then do analysis together
 
-def load_analysis_files(path, animal_number, start_times_dict, channel_number):
-    #specify starting time to use in dictionary 
-    starting_1 = animal_number + '_1'
-    starting_2 = animal_number + '_2'
+def load_analysis_files(directory_path, animal_id):
+    '''function finds all files for a particular animal'''
 
-    files=[]
-
-    for r, d, f in os.walk(path):
-        for file in f:
-            if animal_number in file:
-                files.append(os.path.join(r, file))
-        
-    #load numpy file and corresponding brain state 
-    for f in files:
-        print(f)
-
-    #load data corresponding to animal number
-    for raw_recording in files:
-        if raw_recording.endswith('npy'):
-            data = np.load(raw_recording)
-
-    #finding brain state files 
-    for brain_state_file in files:
-        if brain_state_file.endswith('1_' + animal_number + '.pkl'):
-            global brain_state_1
-            global brain_state_2
-            brain_state_1 = pd.read_pickle(brain_state_file)
-        else:
-            if brain_state_file.endswith('2_' + animal_number + '.pkl'):
-                brain_state_2 = pd.read_pickle(brain_state_file)
+    start_1 = '1_' + animal_id + '.pkl' 
+    start_2 = '2_' + animal_id + '.pkl'
     
+    os.chdir(directory_path)
+    animal_recording = [filename for filename in os.listdir(directory_path) if filename.startswith(animal_id)]
+    recording = np.load(animal_recording[0])
+    brain_file_1 = [filename for filename in os.listdir(directory_path) if filename.endswith(start_1)]
+    brain_state_1 = pd.read_pickle(brain_file_1[0])
+    brain_file_2 = [filename for filename in os.listdir(directory_path) if filename.endswith(start_2)]
+    if len(brain_file_2) > 0:
+        brain_state_2 = pd.read_pickle(brain_file_2[0])
+    else:
+        brain_state_2 = None
+    
+    return recording, brain_state_1, brain_state_2
 
-    #finding start times for specific animal from start_times dictionary 
-    global animal_id
-    global data_baseline1
-    global data_baseline_2
-    for animal_id in start_times_dict:
-        if animal_id == starting_1:
-            global starting_time_1
-            global starting_time_2
-            time_1 = start_times_dict[animal_id]
-            starting_time_1 = time_1[0]
-            data_baseline_1 = data[channel_number, starting_time_1:]
-        else:
-            if animal_id ==starting_2:
-                time_2 = start_times_dict[animal_id]
-                starting_time_2 = time_2[0]
-                data_baseline_2 = data[channel_number, starting_time_2:]
+def get_start_times(start_times_dict, animal_id):
+    '''function finds corresponding start times for animal, brainstate and recording condition'''
+    start_dict_1 = animal_id + '_1'
+    start_dict_2 = animal_id + '_2'
    
+    for animal_id in start_times_dict:
+        if animal_id == start_dict_1:
+            time_1 = start_times_dict[animal_id]
+            start_time_1 = time_1[0]
+        else:
+            if animal_id ==start_dict_2:
+                time_2 = start_times_dict[animal_id]
+                start_time_2 = time_2[0]
     
-    return data_baseline_1, data_baseline_2, brain_state_1, brain_state_2
+    return start_time_1, start_time_2
 
+def load_recording_from_start(recording, channel_number, start_time_1, start_time_2):
+    '''function loads recordings using output from previous functions'''
+    data_1 = recording[channel_number, start_time_1:]
+    data_2 = recording[channel_number, start_time_2:]
 
-def load_analysis_files_onebrainstate(path, animal_number, starting_times_dict, channel_number):
-
-    starting_1 = animal_number + '_1'
-
-    files = []
-
-    for r, d, f in os.walk(path):
-        for file in f:
-            if animal_number in file:
-                files.append(os.path.join(r, file))
-
-    for f in files:
-        print(f)
-
-    for raw_recording in files:
-        if raw_recording.endswith('npy'):
-            data = np.load(raw_recording)
-
-    global brain_state
-    for brain_state_file in files:
-        if brain_state_file.endswith(animal_number + '.pkl'):
-            brain_state = pd.read_pickle(brain_state_file)
-
-    for animal_id in starting_times_dict:
-        if animal_id == starting_1:
-            global time_1
-            global starting_time
-            time_1 = starting_times_dict[animal_id]
-            starting_time = time_1[0]
-
-    global data_baseline1
-    data_baseline1 = data[channel_number, starting_time:]
-
-    return data_baseline1, brain_state
-
-
-#the function below slices out indices from data file that correspond to brainstates
+    return data_1, data_2
 
 
 def brainstate_times_REM_wake(brain_state_file, brainstate_number):

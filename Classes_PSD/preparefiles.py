@@ -15,12 +15,12 @@ class PrepareFiles():
     start_dictionary = dictionary with start times for recording condition (baseline, saline or ETX)'''
     
     
-    def __init__(self, file_path, animal_id, channel_number, start_dictionary):
-        self.file_path = file_path
+    def __init__(self, directory_path, animal_id, channel, start_dictionary):
+        self.directory_path = directory_path
         self.animal_id = animal_id
-        self.start_1 = animal_id + '_1'
-        self.start_2 = animal_id + '_2'
-        self.channel_number = channel_number
+        self.start_1 = '1_' + animal_id + '.pkl'
+        self.start_2 = '2_' + animal_id + '.pkl'
+        self.channel = channel
         self.start_dictionary = start_dictionary
         
         '''to permanently save a value instead of loading each time, cache them under the init function'''
@@ -29,28 +29,16 @@ class PrepareFiles():
         
     def get_data_files(self):
         '''function returns file names in folder'''
-        files = []
-        recording_file = None
-        brain_state_1 = None
-        brain_state_2 = None
-        
-        for r,d, f in os.walk(self.file_path):
-            for file in f:
-                if self.animal_id in file:
-                    files.append(os.path.join(r, file))
-        
-        for raw_recording in files:
-            if raw_recording.endswith('npy'):
-                recording_file = np.load(raw_recording)
-                
-        for brain_state_file in files:
-            if brain_state_file.endswith('1_' + self.animal_id + '.pkl'):
-                brain_state_1 = pd.read_pickle(brain_state_file)
-            else:
-                if brain_state_file.endswith('2_' + self.animal_id + '.pkl'):
-                    brain_state_2 = pd.read_pickle(brain_state_file)
-        
-        return  recording_file, brain_state_1, brain_state_2
+        os.chdir(self.directory_path)
+        animal_recording = [filename for filename in os.listdir(self.directory_path) if filename.startswith(self.animal_id)]
+        print(type(animal_recording))
+        recording = np.load(animal_recording[0])
+        brain_file_1 = [filename for filename in os.listdir(self.directory_path) if filename.endswith(self.start_1)]
+        brain_state_1 = pd.read_pickle(brain_file_1[0])
+        brain_file_2 = [filename for filename in os.listdir(self.directory_path) if filename.endswith(self.start_2)]
+        brain_state_2 = pd.read_pickle(brain_file_2[0])
+    
+        return recording, brain_state_1, brain_state_2
     
     
     def get_start_time(self):

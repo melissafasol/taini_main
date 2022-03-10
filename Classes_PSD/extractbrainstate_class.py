@@ -10,15 +10,12 @@ class ExtractBrainstateTimes(object):
         self.epoch_duration = int(250.4*5)
         self.brainstate_file = brainstate_file
         self.brainstate_number = brainstate_number
-        self.wake = 0 
-        self.nonREM = 1
-        self.REM = 2
         
-        
-    def get_brainstate_excel_values(self, brainstate_file, brainstate_number):
+
+    def get_brainstate_excel_values(self):
         '''slice out excel values that correspond to brain state value'''
-        column_indices = brainstate_file.iloc[:,0] == brainstate_number
-        brain_state_indices = brainstate_file[column_indices]
+        column_indices = self.brainstate_file.iloc[:,0] == self.brainstate_number
+        brain_state_indices = self.brainstate_file[column_indices]
         all_indices = brain_state_indices.index
         
         return all_indices
@@ -43,10 +40,10 @@ class ExtractBrainstateTimes(object):
         time_end_values = []
         
         for i in range(len(epoch_indices)):
-            time_start_values.append(brainstate_file.iloc[epoch_indices[i][0], 1])
+            time_start_values.append(self.brainstate_file.iloc[epoch_indices[i][0], 1])
             
         for i in range(len(epoch_indices)):
-            time_end_values.append(brainstate_file.iloc[epoch_indices[i][1], 2])
+            time_end_values.append(self.brainstate_file.iloc[epoch_indices[i][1], 2])
             
         #zip start and end values into pairs 
         zipped_timevalues = zip(time_start_values, time_end_values)
