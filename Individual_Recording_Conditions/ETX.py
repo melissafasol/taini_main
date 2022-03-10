@@ -39,8 +39,8 @@ frequency_df = pd.DataFrame({'Frequency': frequency_values})
 ETX_2_numpyfiles.append(frequency_df)
 
 for animal in animal_two_numpy_file:
-    for chan in channel_number:
-        concatenate_data, brain_state = concatenate_ETX_data(path, chan, animal_number= animal, start_ETX_time= start_times_ETX)
+    for channel in channel_number:
+        concatenate_data, brain_state = concatenate_ETX_data(path, channel, animal_number= animal, start_ETX_time= start_times_ETX)
         if brain_state_number == 1:
             time_start_values, time_end_values = brain_state_times_nonREM(brain_state, brain_state_number)
             timevalues = timevalues_array_nonREM(time_start_values, time_end_values)
@@ -56,8 +56,8 @@ for animal in animal_two_numpy_file:
         slope_epochs, intercept_epochs = plot_lin_reg(psd_clean, frequency)
         psd_average_results = psd_average(psd_clean, frequency, animal)
         list_mean = list(psd_average_results)
-        spectralslope_df = pd.DataFrame(data = {str(animal) + '_chan_' + str(chan) + '_slope': slope_epochs, str(animal) + '_chan_' + str(chan) + '_intercept':intercept_epochs})
-        results=pd.DataFrame(data={str(animal) + '_chan_' + str(chan):list_mean})
+        spectralslope_df = pd.DataFrame(data = {str(animal) + '_chan_' + str(channel) + '_slope': slope_epochs, str(animal) + '_chan_' + str(channel) + '_intercept':intercept_epochs})
+        results=pd.DataFrame(data={str(animal) + '_chan_' + str(channel):list_mean})
         ETX_2_numpyfiles.append(results)
         ETX_slope_intercept_2.append(spectralslope_df)
 
@@ -87,7 +87,7 @@ ETX_1_numpyfile.append(frequency_df)
 
 for animal in animal_one_numpy_file:
     for channel in channel_number:
-        concatenate_data, brain_state = one_numpy_ETX(path, chan, animal_number= animal, start_ETX_time= start_times_ETX)
+        concatenate_data, brain_state = one_numpy_ETX(path, channel, animal_number= animal, start_ETX_time= start_times_ETX)
         if brain_state_number == 1:
             time_start_values, time_end_values = brain_state_times_nonREM(brain_state, brain_state_number)
             timevalues = timevalues_array_nonREM(time_start_values, time_end_values)
@@ -106,12 +106,12 @@ for animal in animal_one_numpy_file:
         psd_average_results = psd_average(psd_clean, frequency, animal)
         list_mean = list(psd_average_results)
         slope_intercept_df = pd.DataFrame(
-        data = {str(animal) + '_chan_' + str(chan) + '_slope_'
+        data = {str(animal) + '_chan_' + str(channel) + '_slope_'
         + str(brain_state_number): slope_epochs, 
-        str(animal) + '_' + str(chan) + 'intercept'
+        str(animal) + '_' + str(channel) + 'intercept'
         + str(brain_state_number): intercept_epochs})
         results = pd.DataFrame(data = {str(animal) + '_chan_' + 
-        str(chan) :list_mean})
+        str(channel) :list_mean})
         ETX_1_numpyfile.append(results)
         ETX_slope_intercept_1.append(slope_intercept_df)
 
