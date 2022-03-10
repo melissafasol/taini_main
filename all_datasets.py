@@ -1,11 +1,9 @@
 '''this file applies functions in psd_taini_mainfunctions.py to all datasets'''
-
-from psd_taini_mainfunctions import load_analysis_files, brainstate_times_REM_wake, brain_state_times_nonREM, timevalues_array_nonREM, highpass
-from psd_taini_mainfunctions import channel_data_extraction, load_analysis_files_onebrainstate, look_for_outliers, remove_epochs, plot_lin_reg, remove_noise, psd_per_channel, psd_average
-from Individual_Recording_Conditions.saline_functions import concatenate_saline_data, one_numpy_saline
-from Individual_Recording_Conditions.ETX_functions import concatenate_ETX_data, one_numpy_ETX
-from constants import start_times_baseline, start_times_saline, start_times_ETX, baseline_recording_dictionary, saline_recording_dictionary, ETX_recording_dictionary
-from save_functions import concatenate_files, save_files
+import psd_taini_mainfunctions
+import Individual_Recording_Conditions.saline_functions
+import Individual_Recording_Conditions.ETX_functions
+import constants
+import save_functions
 
 #other required imports 
 import pandas as pd 

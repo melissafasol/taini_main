@@ -8,7 +8,7 @@ class LoadRecording():
     
     '''
     start_1 = starting time for first numpy file 
-    start_2 = starting tmie for second numpy file 
+    start_2 = starting time for second numpy file 
     channel_number = channel to slice out of loaded data recording
     start_dictionary = dictionary with start times for recording condition (baseline, saline or ETX)'''
     
