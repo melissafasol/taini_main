@@ -64,6 +64,28 @@ def load_recording_from_start(recording, channel_number, start_time_1, start_tim
     return data_1, data_2
 
 
+def brainstate_indices(brainstate_file, brainstate_number):
+    #function to find indices in brainstate file which correspond to brainstate_number
+    index_brainstate = brainstate_file.iloc[:0] == brainstate_number
+    brain_state_indices = brainstate_file[index_brainstate]
+    all_indices = brain_state_indices.index
+
+    return all_indices
+
+def find_index_jumps(all_indices):
+    #now find where these indices jump into separate epochs
+    epoch_indices = []
+    starting_index = all_indices[0]
+        
+    for epoch_index in range(len(all_indices)-1):
+        if all_indices[epoch_index] + 1 != all_indices[epoch_index +1]:
+            epoch_indices.append([starting_index, all_indices[epoch_index]])
+            starting_index = all_indices[epoch_index+1]
+                
+    #need to append the last value outside of the loop as loop is for len -1
+    epoch_indices.append([starting_index, all_indices[-1]])
+
+
 def brainstate_times_REM_wake(brain_state_file, brainstate_number):
     
     #brainstate_number can be 0 - (wake), 1 - (nonREM) or 2 - REM
@@ -75,7 +97,6 @@ def brainstate_times_REM_wake(brain_state_file, brainstate_number):
 
 
     query = brain_state_file.iloc[:,0] == brainstate_number #REM is 2
-        
         
     #find index values in brain state file that correspond to the wake state
     brain_state_indices = brain_state_file[query]
@@ -100,7 +121,6 @@ def brainstate_times_REM_wake(brain_state_file, brainstate_number):
     for epoch_index in range(len(epoch_indices)):
         time_start_values.append(brain_state_file.iloc[epoch_indices[epoch_index][0],1])
     
-
     for epoch_index in range(len(epoch_indices)):
         time_end_values.append(brain_state_file.iloc[epoch_indices[epoch_index][1],2])
         
@@ -312,7 +332,7 @@ def look_for_outliers(psd, frequency):
     return intercept_epochs_remove, slope_epochs_remove
 
 'function below averages psd calculations per frequency and returns a PSD plot'
-
+ 
 def remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd):
 
     if len(intercept_epochs_remove) > len(slope_epochs_remove):

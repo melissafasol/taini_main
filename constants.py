@@ -98,8 +98,8 @@ gap_animal_ids = ['S7063', 'S7064', 'S7069', 'S7072', 'S7075', 'S7076', 'S7088',
 
 #dictionaries with information to find files and which files contain two files per recording condtion
 baseline_recording_dictionary = {'path' : '/home/melissa/preprocessing/numpyformat_baseline', 
-                                'animal_two_brainstates' :['S7063', 'S7064', 'S7069', 'S7071', 'S7086', 'S7091', 'S7092'], #'S7070'
-                                'animal_one_brainstate' : ['S7068', 'S7074', 'S7075', 'S7076','S7088', 'S7094', 'S7098', 'S7101'], #S7072 #S7096 #S7087
+                                'animal_two_brainstates' :['S7063','S7064', 'S7069', 'S7086', 'S7091'], #'S7070', S7071
+                                'animal_one_brainstate' : ['S7068', 'S7071', 'S7074', 'S7075', 'S7088', 'S7092', 'S7094', 'S7098', 'S7101'], #S7072 #S7096 #S7087 #S7076
                                 'seizure_two_brainstates' : ['S7063', 'S7064', 'S7069', 'S7072'],
                                 'seizure_one_brainstate' : ['S7074', 'S7075', 'S7088', 'S7092', 'S7094']}
 
