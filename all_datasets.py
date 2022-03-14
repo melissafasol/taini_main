@@ -1,7 +1,7 @@
 '''this file applies functions in psd_taini_mainfunctions.py to all datasets'''
 import psd_taini_mainfunctions
-import Individual_Recording_Conditions.saline_functions
-import Individual_Recording_Conditions.ETX_functions
+import saline_functions
+import ETX_functions
 import constants
 import save_functions
 

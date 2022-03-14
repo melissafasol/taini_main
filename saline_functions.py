@@ -82,7 +82,7 @@ def concatenate_saline_data(path, channel_number, animal_number, start_saline_di
     
     #concatenate recording 1 and 2 into one dataset
 
-    concatenate_dataset = np.concatenate((recording_1, recording_2))
+    concatenate_dataset = np.hstack((recording_1, recording_2))
 
     for brain_state_file in files:
         if brain_state_file.endswith('.pkl'):

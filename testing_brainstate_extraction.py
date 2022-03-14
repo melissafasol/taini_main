@@ -31,9 +31,12 @@ from numpy.lib.function_base import average
 directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
 channel_number = [11]
 recording_condition = ['baseline', 'saline', 'ETX']
-brainstate_number = [2,1,0]
+brainstate_number = [2, 1, 0]
 
-#empty lists 
+#empty lists
+
+
+
 for condition in recording_condition:
     print(condition)
     #empty lists
@@ -47,28 +50,6 @@ for condition in recording_condition:
             frequency_df = pd.DataFrame({'Frequency': frequency_values})
             small_dfs_two_brainstates.append(frequency_df)
             small_dfs_one_brainstate.append(frequency_df)
-            for animal in baseline_recording_dictionary['animal_two_brainstates']:
-                for channel in channel_number:
-                    data_1, data_2, brain_state_1, brain_state_2 = hof_load_files(directory_path, animal, start_times_baseline, channel)
-                    if brainstate == 1:
-                        timevalues_1 = hof_extract_brainstate_nonREM(brain_state_1, brainstate)
-                        timevalues_2 = hof_extract_brainstate_nonREM(brain_state_2, brainstate)
-                    else:
-                        timevalues_1 = hof_extract_brainstate_REM_wake(brain_state_1,brainstate)
-                        timevalues_2 = hof_extract_brainstate_REM_wake(brain_state_2,brainstate)
-                    withoutartifacts_1 = hof_filter(data_1,timevalues_1)
-                    withoutartifacts_2 = hof_filter(data_2,timevalues_2)
-                    psd_mean_1, slope_1, intercept_1 = hof_psd_with_specslope_filter(withoutartifacts_1)
-                    psd_mean_2, slope_2, intercept_2 = hof_psd_with_specslope_filter(withoutartifacts_2)
-                    spectral_data_1 = save_spectral_slope_data(slope_1, intercept_1, brainstate, animal, channel)
-                    spectral_data_2 = save_spectral_slope_data(slope_2, intercept_2, brainstate, animal, channel)
-                    slopegradient_intercept_2_brainstate.append(spectral_data_1)
-                    slopegradient_intercept_2_brainstate.append(spectral_data_2)
-                    average_power = average_power_df(psd_mean_1, psd_mean_2)
-                    power_data = power_df(average_power, brainstate, animal, channel)
-                    small_dfs_two_brainstates.append(power_data)
-            save_directory = '/home/melissa/Results/march_refactor_test/nonREM_fewer_discarded_epochs'
-            hof_concatenate_and_save(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate, save_directory, brainstate, condition)
             for animal in baseline_recording_dictionary['animal_one_brainstate']:
                 for channel in channel_number:
                     data_1, data_2, brain_state_1, brain_state_2 = hof_load_files(directory_path, animal, start_times_baseline, channel)
@@ -76,12 +57,14 @@ for condition in recording_condition:
                         timevalues_1 = hof_extract_brainstate_nonREM(brain_state_1, brainstate)
                     else:
                         timevalues_1 = hof_extract_brainstate_REM_wake(brain_state_1,brainstate)
+                    os.chdir('/home/melissa/Results/testing_brainstate_extraction')
+                    np.save('timevalues' + str(brainstate) + str(animal), timevalues_1)
                     withoutartifacts_1 = hof_filter(data_1, timevalues_1)
                     psd_mean, slope, intercept = hof_psd_with_specslope_filter(withoutartifacts_1)
                     spectral_data = save_spectral_slope_data(slope, intercept, brainstate, animal, channel)
                     power_data = power_df(psd_mean, brainstate, animal, channel)
                     slopegradient_intercept_1_brainstate.append(spectral_data)
                     small_dfs_one_brainstate.append(power_data)
-            save_directory = '/home/melissa/Results/march_refactor_test/nonREM_fewer_discarded_epochs'
-            hof_concatenate_and_save(small_dfs_one_brainstate, slopegradient_intercept_1_brainstate, save_directory, brainstate, condition)
+            #save_directory = '/home/melissa/Results/march_refactor_test/baseline_one_numpy_file'
+            #hof_concatenate_and_save(small_dfs_one_brainstate, slopegradient_intercept_1_brainstate, save_directory, brainstate, condition)
 

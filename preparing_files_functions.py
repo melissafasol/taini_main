@@ -24,6 +24,7 @@ def load_analysis_files(directory_path, animal_id):
         
     os.chdir(directory_path)
     animal_recording = [filename for filename in os.listdir(directory_path) if filename.startswith(animal_id)]
+    print(animal_recording)
     recording = np.load(animal_recording[0])
     brain_file_1 = [filename for filename in os.listdir(directory_path) if filename.endswith(start_1)]
     brain_state_1 = pd.read_pickle(brain_file_1[0])
@@ -39,11 +40,13 @@ def get_start_times(start_times_dict, animal_id):
     '''function finds corresponding start times for animal, brainstate and recording condition'''
     
     check_keys = [k for k, v in start_times_dict.items() if animal_id in k]
-    
+    print(check_keys)
     if len(check_keys) == 2:
         start_time_1 = start_times_dict[check_keys[0]]
+        print(start_time_1)
         start_time_1 = start_time_1[0]
         start_time_2 = start_times_dict[check_keys[1]]
+        print(start_time_2)
         start_time_2 = start_time_2[0]
     if len (check_keys) == 1:
         start_time_1 = start_times_dict[check_keys[0]]
@@ -64,6 +67,7 @@ def load_recording_from_start(recording, channel, start_time_1, start_time_2):
 
 def hof_load_files(directory_path, animal_id, start_times_dict, channel):
     recording, brain_state_1, brain_state_2 = load_analysis_files(directory_path, animal_id)
+    print(brain_state_2)
     start_time_1, start_time_2 = get_start_times(start_times_dict, animal_id)
     data_1, data_2 = load_recording_from_start(recording, channel, start_time_1, start_time_2)
     print('all_data_loaded for_' + str(animal_id))
@@ -71,9 +75,8 @@ def hof_load_files(directory_path, animal_id, start_times_dict, channel):
 
 def brainstate_indices(brainstate_file, brainstate_number):
     #function to find indices in brainstate file which correspond to brainstate_number
-    index_brainstate = brainstate_file.iloc[:0] == brainstate_number
-    brain_state_indices = brainstate_file[index_brainstate]
-    all_indices = brain_state_indices.index
+    index_brainstate = brainstate_file.loc[brainstate_file['brainstate'] == brainstate_number]
+    all_indices = index_brainstate.index
 
     return all_indices
 
@@ -134,8 +137,8 @@ def non_REM_epoch_deletion(epoch_indices):
                 
     new_epochs = []
     for epoch in epochs_above_five:
-            start_epoch = epoch[0] + 2
-            end_epoch = epoch[1] - 2
+            start_epoch = epoch[0] + 1
+            end_epoch = epoch[1] - 1
             new_epoch_pair = start_epoch, end_epoch
             new_epochs.append(new_epoch_pair)
             
