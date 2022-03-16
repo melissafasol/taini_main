@@ -66,15 +66,11 @@ def concatenate_saline_data(path, channel_number, animal_number, start_saline_di
         elif animal_id == end_1B:
             end_2 = start_saline_dict[animal_id]
     
-    start_1 = start_1[0]
-    end_1 = end_1[0]
-    start_2 = start_2[0]
-    end_2 = end_2[0]
+    start_1 = int(start_1[0])
+    end_1 = int(end_1[0])
+    start_2 = int(start_2[0])
+    end_2 = int(end_2[0])
 
-    start_1 = int(start_1)
-    end_1 = int(end_1)
-    start_2 = int(start_2)
-    end_2 = int(end_2)
 
 #extract rows corresponding to channel number and parse out data between start and end times
     recording_1 = numpy_A[channel_number, start_1:end_1]
@@ -82,7 +78,7 @@ def concatenate_saline_data(path, channel_number, animal_number, start_saline_di
     
     #concatenate recording 1 and 2 into one dataset
 
-    concatenate_dataset = np.hstack((recording_1, recording_2))
+    concatenate_dataset = np.concatenate([recording_1[0], recording_2[0]])
 
     for brain_state_file in files:
         if brain_state_file.endswith('.pkl'):

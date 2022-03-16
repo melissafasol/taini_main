@@ -1,3 +1,4 @@
+from pickletools import read_unicodestringnl
 import pandas as pd
 import os 
 import numpy as np 
@@ -40,23 +41,23 @@ def concatenate_ETX_data(path, channel_number, animal_number, start_ETX_time):
         elif animal_id == end_1B:
             end_2 = start_ETX_time[animal_id]
     
-    start_1 = start_1[0]
-    end_1 = end_1[0]
-    start_2 = start_2[0]
-    end_2 = end_2[0]
-
-    start_1 = int(start_1)
-    end_1 = int(end_1)
-    start_2 = int(start_2)
-    end_2 = int(end_2)
+    start_1 = int(start_1[0])
+    print(start_1)
+    end_1 = int(end_1[0])
+    print(end_1)
+    start_2 = int(start_2[0])
+    print(start_2)
+    end_2 = int(end_2[0])
+    print(end_2)
 
     #extract rows corresponding to channel number and parse out data between start and end times
     recording_1 = numpy_A[channel_number, start_1:end_1]
+    print(recording_1[0])
     recording_2 = numpy_A[channel_number, start_2:end_2]
-    
+    print(recording_2[0])
     #concatenate recording 1 and 2 into one dataset
 
-    concatenate_dataset = np.concatenate((recording_1, recording_2))
+    concatenate_dataset = np.concatenate([recording_1[0], recording_2[0]])
 
     for brain_state_file in files:
         if brain_state_file.endswith('.pkl'):
@@ -101,3 +102,4 @@ def one_numpy_ETX(path, channel_number, animal_number, start_ETX_time):
             brain_state = pd.read_pickle(brain_state_file)
 
     return recording_one_numpy, brain_state
+

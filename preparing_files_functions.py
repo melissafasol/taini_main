@@ -137,8 +137,8 @@ def non_REM_epoch_deletion(epoch_indices):
                 
     new_epochs = []
     for epoch in epochs_above_five:
-            start_epoch = epoch[0] + 1
-            end_epoch = epoch[1] - 1
+            start_epoch = epoch[0] + 2
+            end_epoch = epoch[1] - 2
             new_epoch_pair = start_epoch, end_epoch
             new_epochs.append(new_epoch_pair)
             
