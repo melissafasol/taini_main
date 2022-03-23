@@ -67,7 +67,6 @@ def load_recording_from_start(recording, channel, start_time_1, start_time_2):
 
 def hof_load_files(directory_path, animal_id, start_times_dict, channel):
     recording, brain_state_1, brain_state_2 = load_analysis_files(directory_path, animal_id)
-    print(brain_state_2)
     start_time_1, start_time_2 = get_start_times(start_times_dict, animal_id)
     data_1, data_2 = load_recording_from_start(recording, channel, start_time_1, start_time_2)
     print('all_data_loaded for_' + str(animal_id))

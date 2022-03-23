@@ -4,7 +4,7 @@ email: s1660428@ed.ac.uk
 
 This script is to apply functions to all datasets'''
 
-from preparing_files_functions import hof_load_files, hof_extract_brainstate_REM_wake, hof_extract_brainstate_nonREM
+from prepare_files_functions import hof_load_files, hof_extract_brainstate_REM_wake, hof_extract_brainstate_nonREM
 from filter_functions import hof_filter
 from spectral_slope import hof_psd_with_specslope_filter
 import saline_functions

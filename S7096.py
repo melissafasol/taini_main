@@ -31,25 +31,19 @@ def concatenate_S7096(path, channel_number, animal_number, start_times_S7096):
 
 
     for animal_id in start_times_S7096:
-        if animal_id == start_1:
-            start_1 = start_times_S7096[animal_id]
-        elif animal_id == end_1:
-            end_1 = start_times_S7096[animal_id]
-        elif animal_id == start_1A:
-            start_2 = start_times_S7096[animal_id]
-        elif animal_id == end_1A:
-            end_2 = start_times_S7096[animal_id]
-        elif animal_id == start_1B:
-            start_3 = start_times_S7096[animal_id]
-        elif animal_id == end_1B:
-            end_3 = start_times_S7096[animal_id]
+        start_1 = start_times_S7096['S7096_1']
+        end_1 = start_times_S7096['S7096_2']
+        start_2 = start_times_S7096['S7096_1A']
+        end_2 = start_times_S7096['S7096_2A']
+        start_3 = start_times_S7096['S7096_1B']
+        end_3 = start_times_S7096['S7096_2B']
 
-    start_1 = start_1[0]
-    end_1 = end_1[0]
-    start_2 = start_2[0]
-    end_2 = end_2[0]
-    start_3 = start_3[0]
-    end_3 = end_3[0]
+    start_1 = int(start_1[0])
+    end_1 = int(end_1[0])
+    start_2 = int(start_2[0])
+    end_2 = int(end_2[0])
+    start_3 = int(start_3[0])
+    end_3 = int(end_3[0])
 
     recording_1 = numpy_A[channel_number, start_1:end_1]
     recording_2 = numpy_A[channel_number, start_2:end_2]

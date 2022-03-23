@@ -28,6 +28,17 @@ def psd_per_channel(data_without_noise):
         
     return psd, frequency
 
+'''This function is for baseline brainstate file number 2 as the function psd_per_channel does not work in all channels'''
+
+def psd_per_channel_baseline_2(without_artifacts):
+    welch_channel = []
+    for data_array in without_artifacts:
+        welch_channel.append(scipy.signal.welch(data_array, fs=250.4, window='hann', nperseg=1252))
+    
+    psd = [power_array[1] for power_array in welch_channel]
+
+    return psd
+
 'function below calculates line of best fit for psd of each epoch and returns the average slope intercept and gradient'
 def plot_spectral_slope(psd, frequency):
 
@@ -85,12 +96,14 @@ def plot_lin_reg(psd, frequency):
     return slope_epochs, intercept_epochs
 
 def psd_average(psd,frequency): 
-    
-    df_psd = pd.DataFrame(psd)
-    mean_values = df_psd.mean(axis = 0)
 
+    df_psd = pd.DataFrame(psd)
+    mean_values = df_psd.mean(axis=0)
+    mean_psd = mean_values.to_numpy()
+
+    print(mean_psd.shape)
     #fig = plt.figure()
-    plt.semilogy(frequency, mean_values)
+    plt.semilogy(frequency, mean_psd)
     plt.xlabel('Frequency [Hz]')
     plt.xlim(1,50)
     plt.ylim(10**-3, 10**4)
@@ -98,7 +111,8 @@ def psd_average(psd,frequency):
     #plt.show()
 
 
-    return mean_values
+    return mean_psd
+
 
 
 def hof_psd_with_specslope_filter(data_without_artifacts):
@@ -106,6 +120,14 @@ def hof_psd_with_specslope_filter(data_without_artifacts):
     slope_list, intercept_list = plot_spectral_slope(psd, frequency)
     intercept_epochs_remove, slope_epochs_remove = get_outlier_values(slope_list, intercept_list)
     psd = remove_epochs(intercept_epochs_remove, slope_epochs_remove, psd)
-    slope_epochs, intercept_epochs = plot_lin_reg(psd, frequency)
-    mean_values = psd_average(psd, frequency)
-    return mean_values, slope_epochs, intercept_epochs
+    '''if all epochs exceed the threshold - save the data only for brainstate 1 for that channel'''
+    if len(psd) == 0:
+        psd = 'CHANNEL EXCEEDS THRESHOLD'
+        slope_epochs = 'EPOCHS EXCEED THRESHOLD'
+        intercept_epochs = 'EPOCHS EXCEED THRESHOLD'
+        return psd, slope_epochs, intercept_epochs
+    else:
+        slope_epochs, intercept_epochs = plot_lin_reg(psd, frequency)
+        mean_values = psd_average(psd, frequency)
+        return mean_values, slope_epochs, intercept_epochs
+

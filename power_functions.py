@@ -38,9 +38,10 @@ def psd_average(psd,frequency):
     
     df_psd = pd.DataFrame(psd)
     mean_values = df_psd.mean(axis = 0)
+    mean_psd = mean_values.to_numpy()
 
     #fig = plt.figure()
-    plt.semilogy(frequency, mean_values)
+    plt.semilogy(frequency, mean_psd)
     plt.xlabel('Frequency [Hz]')
     plt.xlim(1,50)
     plt.ylim(10**-3, 10**4)
@@ -54,4 +55,4 @@ def psd_average(psd,frequency):
 def hof_psd_nofilter(data_without_noise):
     psd, frequency = psd_per_channel(data_without_noise)
     mean_values = psd_average(psd, frequency)
-    return(mean_values)
+    return(psd, mean_values)

@@ -50,7 +50,7 @@ def save_files(directory_name, concatenated_power_file, concatenated_slope_file,
         concatenated_power_file.to_csv(str(condition) + '_'  + '_REM_power.csv', index=True)
         concatenated_slope_file.to_csv(str(condition) + '_'  + '_REM_slopeintercept.csv', index=True)
 
-def hof_concatenate_and_save(power_file, spectral_file, directory_name, brain_state_number, condition, channel):
+def hof_concatenate_and_save(power_file, spectral_file, directory_name, brain_state_number, condition):
     merged_power_file, merged_spectral_file = concatenate_files(power_file, spectral_file)   
-    save_files(directory_name, merged_power_file, merged_spectral_file, brain_state_number, condition, channel)
+    save_files(directory_name, merged_power_file, merged_spectral_file, brain_state_number, condition)
     print('Files saved for ' + str(brain_state_number) + '_' + str(condition))         

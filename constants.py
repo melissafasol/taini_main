@@ -26,6 +26,10 @@ start_times_baseline = {'S7063_1': [15324481], 'S7063_2': [36959041],
                        'S7098_1': [35246305], 'S7098_2':[56880865],
                        'S7101_1': [35246305], 'S7101_2':[56880865]}
 
+start_times_S7096_baseline = {'S7096_1': [34465057], 'S7096_2':[56099616],
+                    'S7096_1A': [56054795], 'S7096_2A':[61102858],
+                    'S7096_1B': [1], 'S7096_2B': [16586496]}
+
 start_times_saline = {'S7063_1': [37094257], 'S7063_2': [58728816], 
                        'S7064_1': [15324481], 'S7064_2':[36959040],
                        'S7068_1': [37034161], 'S7068_2':[58668720],
@@ -42,10 +46,12 @@ start_times_saline = {'S7063_1': [37094257], 'S7063_2': [58728816],
                        'S7076_1': [18284209], 'S7076_2': [39918768],
                        'S7083_1': [60847201], 'S7083_2':[82481760],
                        'S7086_1': [18103921], 'S7086_2': [39738480],
+                       'S7087_1': [19200673], 'S7087_2': [40835232],
                        'S7088_1': [19200673], 'S7088_2': [40835232], 
                        'S7091_1': [58638673], 'S7091_2': [80273232],
                        'S7092_1': [58638673], 'S7092_2':[80273232],
                        'S7094_1': [12830497], 'S7094_2': [34465056],
+                       'S7096_1': [12830497], 'S7096_2': [34465056],
                        'S7098_1': [13611745], 'S7098_2':[35246304],
                        'S7101_1': [13611745], 'S7101_2':[35246304]}
 
@@ -99,15 +105,14 @@ gap_animal_ids = ['S7063', 'S7064', 'S7069', 'S7072', 'S7075', 'S7076', 'S7088',
 
 #dictionaries with information to find files and which files contain two files per recording condtion
 baseline_recording_dictionary = {'path' : '/home/melissa/preprocessing/numpyformat_baseline', 
-                                'animals_not_running_1_file':[ 'S7072','S7087'], #S7096, S7076
-                                'animal_two_brainstates' :['S7070', 'S7083', 'S7063','S7064', 'S7069', 'S7086', 'S7091'], #S7072
-                                'animal_one_brainstate' : [ 'S7098', 'S7068', 'S7074','S7076', 'S7071', 'S7074', 'S7068', 'S7075', 'S7087', 'S7088', 'S7092', 'S7094', 'S7098', 'S7101'], #S7072 #S7096 
+                                'animal_two_brainstates' :['S7072', 'S7070', 'S7083', 'S7063','S7064', 'S7069', 'S7086', 'S7091'], #S7072
+                                'animal_one_brainstate' : ['S7098', 'S7068', 'S7074','S7076', 'S7071', 'S7075', 'S7087', 'S7088', 'S7092', 'S7094', 'S7101'], #S7072 
                                 'seizure_two_brainstates' : ['S7063', 'S7064', 'S7069', 'S7072'],
                                 'seizure_one_brainstate' : ['S7074', 'S7075', 'S7088', 'S7092', 'S7094']}
 
-saline_recording_dictionary = {'path': '/home/melissa/preprocessing/reformatted_brainstates_saline',
-                              'animal_two_numpy_files' : ['S7070', 'S7071', 'S7074', 'S7075'],
-                              'animal_one_numpy_file' : ['S7098', 'S7101','S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7076', 'S7083', 'S7086', 'S7088', 'S7091', 'S7092'], #S7087 S7096 S7094
+saline_recording_dictionary = {'path': '/home/melissa/preprocessing/reformatted_brainstates_saline', 
+                              'animal_two_numpy_files' : ['S7070', 'S7071', 'S7074', 'S7075'], #S7087
+                              'animal_one_numpy_file' : ['S7094', 'S7098', 'S7101','S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7076', 'S7083', 'S7086', 'S7088', 'S7091', 'S7092', 'S7096'], 
                               'seizure_two_numpy_file' : ['S7074', 'S7075'],
                                'seizure_one_numpy_file' : ['S7063', 'S7064', 'S7068', 'S7069', 'S7072','S7088', 'S7092', 'S7094', 'S7096']}
 
