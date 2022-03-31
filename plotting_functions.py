@@ -13,13 +13,6 @@ import os
 def check_availability(element, variables: iter):
     return element in variables
 
-'''function to reformat csv file to remove unwanted columns and only include values between 0:50Hz'''
-all_animals = pd.read_csv('2_animal2_test_psd_ETX_brainfiles.csv')
-all_animals= all_animals[0:250]
-all_animals = all_animals.drop('Unnamed: 0', axis=1)
-print(all_animals)
-
-
 '''This function takes raw results csv file and removes unwanted columns and rows'''
 def reformat_csv(csv_file_name):
     raw_csv = pd.read_csv(csv_file_name)
@@ -42,11 +35,11 @@ def build_df_to_plot(reformatted_file):
 
     column_names = reformatted_file.columns
     for column in column_names[1:]:
-        for frequency, power in zip(all_animals['Frequency'], reformatted_file[column]):
+        for frequency, power in zip(reformatted_file['Frequency'], reformatted_file[column]):
             frequency_percolumn.append(frequency)
             power_percolumn.append(power)
             column_name.append(column[-7:])
-            animal_id.append(column[0:5])
+            animal_id.append(column[2:7])
 
     results = pd.DataFrame({'Animal_ID': animal_id, 'Frequency': frequency_percolumn, 'Power': power_percolumn, 
                         'Channel': column_name}) 

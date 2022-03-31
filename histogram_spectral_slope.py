@@ -13,17 +13,39 @@ import matplotlib.pyplot as plt
 from scipy.fft import fft, fftfreq
 from math import pi 
 
-def prepare_file(csv_file_path):
-    slope_intercept_df = pd.read_csv(csv_file_path)
-    if 'Unnamed: 0' in  slope_intercept_df.columns:
-         slope_intercept_df =  slope_intercept_df.drop('Unnamed: 0', axis = 1)
-    else:
-        pass
-    #mean_values = [np.mean( slope_intercept_df[column]) for column in slope_intercept_df]
-    #column_names = [str(column) for column in  slope_intercept_df]
-    #mean_df = pd.DataFrame([dict(zip(column_names, mean_values))])
+def reformat_spec_file(file_name):
+    raw_csv = pd.read_csv(file_name)
+    column_names = raw_csv.columns
+    for column in column_names:
+        if column == 'Unnamed: 0':
+            reformatted_file = raw_csv.drop('Unnamed: 0', axis=1)
+    return reformatted_file
+
+def average_df(dataframe):
+    column_names = dataframe.columns.values.tolist()
+    slope_intercept_values = dataframe.mean(axis=0).values
+    slope_intercept_df = pd.DataFrame(data=slope_intercept_values)
+    slope_intercept_df = slope_intercept_df.transpose()
+    slope_intercept_df.columns = column_names
+    
     return slope_intercept_df
 
+def average_2brainstate_files(slope_intercept_df):
+    #createa list of columns without .1
+    columns_test = slope_intercept_df.columns
+    remove_duplicate_list = []
+    for column in columns_test:
+        if column[-1] != '1':
+            remove_duplicate_list.append(column)
+            
+    list_to_average = []
+    for guide_column in remove_duplicate_list:
+        list_to_average.append(slope_intercept_df[[guide_column, guide_column + '.1']].values.mean())
+    
+    create_dict = dict(zip(remove_duplicate_list, list_to_average))
+    twobrainstate_intercept_slope_df = pd.DataFrame(create_dict, index=[0])
+    
+    return twobrainstate_intercept_slope_df
 
 def build_df_distribution_histogram(reformatted_file):
     

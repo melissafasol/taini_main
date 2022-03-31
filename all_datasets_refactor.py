@@ -40,7 +40,7 @@ from numpy.lib.function_base import average
 
 channel_number = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 recording_condition = ['baseline', 'saline', 'ETX']
-brainstate_number = [1,2,0]
+brainstate_number = [0]
 
 #empty lists 
 for condition in recording_condition:
@@ -67,7 +67,9 @@ for condition in recording_condition:
                     psd_mean_1, slope_1, intercept_1 = hof_psd_with_specslope_filter(withoutartifacts_1)
                     psd_mean_2, slope_2, intercept_2 = hof_psd_with_specslope_filter(withoutartifacts_2)
                     '''the following if statements are for noisy datasets in which all datapoints exceed the threshold'''
-                    if type(psd_mean_1) == str:
+                    if type(psd_mean_1) and type(psd_mean_2) == str:
+                        continue
+                    elif type(psd_mean_1) == str:
                         spectral_data = save_spectral_slope_data(slope_2, intercept_2, brainstate, animal, channel)
                         power_data = power_df(psd_mean_2, brainstate, animal, channel)
                         slopegradient_intercept_1_brainstate.append(spectral_data)
@@ -77,8 +79,6 @@ for condition in recording_condition:
                         power_data = power_df(psd_mean_1, brainstate, animal, channel)
                         slopegradient_intercept_1_brainstate.append(spectral_data)
                         small_dfs_one_brainstate.append(power_data)
-                    elif type(psd_mean_1) and type(psd_mean_2) == str:
-                        continue
                     else:
                         spectral_data_1 = save_spectral_slope_data(slope_1, intercept_1, brainstate, animal, channel)
                         spectral_data_2 = save_spectral_slope_data(slope_2, intercept_2, brainstate, animal, channel)
