@@ -57,39 +57,39 @@ for condition in recording_condition:
             frequency_df = pd.DataFrame({'Frequency': frequency_values})
             small_dfs_two_brainstates.append(frequency_df)
             small_dfs_one_brainstate.append(frequency_df)
-            for animal in baseline_recording_dictionary['animal_two_brainstates']:
-                for channel in channel_number:
-                    data_1, data_2, brain_state_1, brain_state_2 = hof_load_files(directory_path, animal, start_times_baseline, channel)
-                    timevalues_1 = hof_extract_brainstate_REM_wake(brain_state_1,brainstate)
-                    timevalues_2 = hof_extract_brainstate_REM_wake(brain_state_2,brainstate)
-                    withoutartifacts_1 = hof_filter(data_1,timevalues_1)
-                    withoutartifacts_2 = hof_filter(data_2,timevalues_2)        
-                    psd_mean_1, slope_1, intercept_1 = hof_psd_with_specslope_filter(withoutartifacts_1)
-                    psd_mean_2, slope_2, intercept_2 = hof_psd_with_specslope_filter(withoutartifacts_2)
-                    '''the following if statements are for noisy datasets in which all datapoints exceed the threshold'''
-                    if type(psd_mean_1) and type(psd_mean_2) == str:
-                        continue
-                    elif type(psd_mean_1) == str:
-                        spectral_data = save_spectral_slope_data(slope_2, intercept_2, brainstate, animal, channel)
-                        power_data = power_df(psd_mean_2, brainstate, animal, channel)
-                        slopegradient_intercept_1_brainstate.append(spectral_data)
-                        small_dfs_one_brainstate.append(power_data)
-                    elif type(psd_mean_2) == str:
-                        spectral_data = save_spectral_slope_data(slope_1, intercept_1, brainstate, animal, channel)
-                        power_data = power_df(psd_mean_1, brainstate, animal, channel)
-                        slopegradient_intercept_1_brainstate.append(spectral_data)
-                        small_dfs_one_brainstate.append(power_data)
-                    else:
-                        spectral_data_1 = save_spectral_slope_data(slope_1, intercept_1, brainstate, animal, channel)
-                        spectral_data_2 = save_spectral_slope_data(slope_2, intercept_2, brainstate, animal, channel)
-                        slopegradient_intercept_2_brainstate.append(spectral_data_1)
-                        slopegradient_intercept_2_brainstate.append(spectral_data_2)
-                        average_power = average_power_df(psd_mean_1, psd_mean_2)
-                        power_data = power_df(average_power, brainstate, animal, channel)
-                        small_dfs_two_brainstates.append(power_data)
-            save_directory = '/home/melissa/Results/march_refactor_test/all_channels/baseline/two_numpy_file'
-            hof_concatenate_and_save(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate, save_directory, brainstate, condition)
-            for animal in baseline_recording_dictionary['animal_one_brainstate']:
+             #for animal in baseline_recording_dictionary['animal_two_brainstates']:
+                # for channel in channel_number:
+                  #   data_1, data_2, brain_state_1, brain_state_2 = hof_load_files(directory_path, animal, start_times_baseline, channel)
+                   #  timevalues_1 = hof_extract_brainstate_REM_wake(brain_state_1,brainstate)
+                    # timevalues_2 = hof_extract_brainstate_REM_wake(brain_state_2,brainstate)
+                    # withoutartifacts_1 = hof_filter(data_1,timevalues_1)
+                     #withoutartifacts_2 = hof_filter(data_2,timevalues_2)        
+                    # psd_mean_1, slope_1, intercept_1 =  #hof_psd_with_specslope_filter(withoutartifacts_1)
+                   #  psd_mean_2, slope_2, intercept_2 = hof_psd_with_specslope_filter(withoutartifacts_2)
+                    # '''the following if statements are for noisy datasets in which all datapoints exceed the threshold'''
+                  #   if type(psd_mean_1) and type(psd_mean_2) == str:
+                    #     continue
+                  #   elif type(psd_mean_1) == str:
+                   #      spectral_data = save_spectral_slope_data(slope_2, intercept_2, brainstate, animal, channel)
+                    #     power_data = power_df(psd_mean_2, brainstate, animal, channel)
+                    #     slopegradient_intercept_1_brainstate.append(spectral_data)
+                    #     small_dfs_one_brainstate.append(power_data)
+                  #   elif type(psd_mean_2) == str:
+                   #      spectral_data = save_spectral_slope_data(slope_1, intercept_1, brainstate, animal, channel)
+                   #      power_data = power_df(psd_mean_1, brainstate, animal, channel)
+                    #     slopegradient_intercept_1_brainstate.append(spectral_data)
+                    #     small_dfs_one_brainstate.append(power_data)
+                     #else:
+                      #   spectral_data_1 = save_spectral_slope_data(slope_1, intercept_1, brainstate, animal, channel)
+                      #   spectral_data_2 = save_spectral_slope_data(slope_2, intercept_2, brainstate, animal, channel)
+                      #   slopegradient_intercept_2_brainstate.append(spectral_data_1)
+                     #    slopegradient_intercept_2_brainstate.append(spectral_data_2)
+                     #    average_power = average_power_df(psd_mean_1, psd_mean_2)
+                     #    power_data = power_df(average_power, brainstate, animal, channel)
+                     #    small_dfs_two_brainstates.append(power_data)
+             #save_directory = '/home/melissa/Results/march_refactor_test/all_channels/baseline/two_numpy_file'
+             #hof_concatenate_and_save(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate, save_directory, brainstate, condition)
+            for animal in baseline_recording_dictionary['animal_one_brainstate_1']:
                 for channel in channel_number:
                     data_1, data_2, brain_state_1, brain_state_2 = hof_load_files(directory_path, animal, start_times_baseline, channel)
                     timevalues_1 = hof_extract_brainstate_REM_wake(brain_state_1,brainstate)
