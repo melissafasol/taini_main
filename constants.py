@@ -113,12 +113,14 @@ baseline_recording_dictionary = {'path' : '/home/melissa/preprocessing/numpyform
 
 saline_recording_dictionary = {'path': '/home/melissa/preprocessing/reformatted_brainstates_saline', 
                               'animal_two_numpy_files' : ['S7070', 'S7071', 'S7074', 'S7075'], #S7087
-                              'animal_one_numpy_file_1' : ['S7094', 'S7098', 'S7101','S7063', 'S7064', 'S7068', 'S7069'], 'animal_one_numpy_file_2': ['S7072', 'S7076', 'S7083', 'S7086', 'S7088', 'S7091', 'S7092', 'S7096'], 
+                              'animal_one_numpy_file_1' : ['S7094', 'S7098', 'S7101','S7063', 'S7064', 'S7068', 'S7069'],
+                              'animal_one_numpy_file_2': ['S7072', 'S7076', 'S7083', 'S7086', 'S7088', 'S7091', 'S7092', 'S7096'], 
                               'seizure_two_numpy_file' : ['S7074', 'S7075'],
                                'seizure_one_numpy_file' : ['S7063', 'S7064', 'S7068', 'S7069', 'S7072','S7088', 'S7092', 'S7094', 'S7096']}
 
 ETX_recording_dictionary = {'path' : '/home/melissa/preprocessing/reformatted_brainstates_ETX',
                             'animal_two_numpy_files' : ['S7063','S7064', 'S7068', 'S7069', 'S7072', 'S7088', 'S7094', 'S7096'],
-                            'animal_one_numpy_file' : ['S7070', 'S7071', 'S7075', 'S7076', 'S7083', 'S7086', 'S7087','S7092', 'S7098', 'S7101', 'S7074', 'S7091'], 
+                            'animal_one_numpy_file_1' : ['S7070', 'S7071', 'S7075', 'S7076', 'S7083'],
+                            'animal_one_numpy_file_2': ['S7086', 'S7087','S7092', 'S7098', 'S7101', 'S7074', 'S7091'], 
                             'seizure_two_numpy_file': ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7094', 'S7096'], #S7088 
                             'seizure_one_numpy_file': ['S7074', 'S7075', 'S7076', 'S7092']} #S7098, S7101
