@@ -20,7 +20,7 @@ from filter_functions import hof_filter
 from spectral_slope import hof_psd_with_specslope_filter
 from saline_functions import concatenate_saline_data, one_numpy_saline
 import ETX_functions
-from constants import saline_recording_dictionary, start_times_saline
+from scripts.constants import saline_recording_dictionary, start_times_saline
 from save_functions import average_power_df, hof_concatenate_and_save, save_spectral_slope_data, power_df, save_files, concatenate_files
 from filter_functions import highpass, channel_data_extraction, remove_noise
 
