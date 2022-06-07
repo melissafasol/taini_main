@@ -1,3 +1,6 @@
+
+'Classes with all methods to prepare recordings and load from start'
+
 from tracemalloc import start
 from builtins import classmethod
 import os 
@@ -14,7 +17,6 @@ class PrepareFiles:
         self.start_2 = '2_' + animal_id + '.pkl'
         self.start_dict_1 = animal_id + '_1'
         self.start_dict_2 = animal_id + '_2'
-        
         
     def load_two_analysis_files(self):
         animal_recording = [filename for filename in os.listdir(self.directory_path) if filename.startswith(self.animal_id)]
@@ -45,8 +47,28 @@ class PrepareFiles:
         return (start_time_1, start_time_2)
 
 
-directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
-animal_1 = 'S7063'
-test_prepare = PrepareFiles(directory_path=directory_path, animal_id=animal_1)
-recording, brain_state_1, brain_state_2 = test_prepare.load_two_analysis_files()
-start_time_1, start_time_2 = test_prepare.get_two_start_times(start_times_baseline)
+class LoadFromStart:
+    
+    def __init__(self, recording, start_time_1, start_time_2, channelnumber):
+        self.recording = recording
+        self.start_time_1 = start_time_1
+        self.start_time_2 = start_time_2
+        self.channelnumber = channelnumber
+        
+    def load_one_file_from_start(self):
+        data_1 = self.recording[self.channelnumber, self.start_time_1:]
+        return data_1
+    
+    def load_two_files_from_start(self):
+        data_1 = self.recording[self.channelnumber, self.start_time_1:]
+        data_2 = self.recording[self.channelnumber, self.start_time_2:]
+        return (data_1, data_2)
+
+#check classes work
+#directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
+#animal_1 = 'S7063'
+#test_prepare = PrepareFiles(directory_path=directory_path, animal_id=animal_1)
+#recording, brain_state_1, brain_state_2 = test_prepare.load_two_analysis_files()
+#start_time_1, start_time_2 = test_prepare.get_two_start_times(start_times_baseline)
+#test_load = LoadFromStart(recording = recording, start_time_1 = start_time_1, start_time_2 = start_time_2, channelnumber = 7)
+#data_1, data_2 = test_load.load_two_files_from_start()
