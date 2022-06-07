@@ -10,7 +10,7 @@ from filter_functions import hof_filter
 from spectral_slope import hof_psd_with_specslope_filter
 import saline_functions
 import ETX_functions
-from constants import baseline_recording_dictionary, start_times_baseline, saline_recording_dictionary, start_times_saline, ETX_recording_dictionary, start_times_ETX, start_times_S7096_baseline
+from scripts.constants import baseline_recording_dictionary, start_times_baseline, saline_recording_dictionary, start_times_saline, ETX_recording_dictionary, start_times_ETX, start_times_S7096_baseline
 from save_functions import average_power_df, hof_concatenate_and_save, save_spectral_slope_data, power_df, save_files, concatenate_files
 from saline_functions import concatenate_saline_data, one_numpy_saline
 from ETX_functions import concatenate_ETX_data, one_numpy_ETX
@@ -87,8 +87,10 @@ for condition in recording_condition:
                          average_power = average_power_df(psd_mean_1, psd_mean_2)
                          power_data = power_df(average_power, brainstate, animal, channel)
                          small_dfs_two_brainstates.append(power_data)
-            save_directory = '/home/melissa/Results/march_refactor_test/all_channels/baseline/two_numpy_file'
-            hof_concatenate_and_save(small_dfs_two_brainstates, slopegradient_intercept_2_brainstate, save_directory, brainstate, condition)
+            os.chdir('/home/melissa/Results/test_2')
+            merged_power_file_2 = pd.concat(small_dfs_two_brainstates, axis=1)
+            merged_power_file_2.to_csv('seizures_baseline_2_file.csv')
+            os.chdir('/home/melissa/preprocessing/numpyformat_baseline') 
             for animal in baseline_recording_dictionary['seizure_one_brainstate']:
                   for channel in channel_number:
                       data_1, data_2, brain_state_1, brain_state_2 = hof_load_files(directory_path, animal, start_times_baseline, channel)
@@ -99,6 +101,7 @@ for condition in recording_condition:
                       power_data = power_df(psd_mean, brainstate, animal, channel)
                       slopegradient_intercept_1_brainstate.append(spectral_data)
                       small_dfs_one_brainstate.append(power_data)
-            save_directory = '/home/melissa/Results/march_refactor_test/all_channels/baseline/one_numpy_file'
-            hof_concatenate_and_save(small_dfs_one_brainstate, slopegradient_intercept_1_brainstate, save_directory, brainstate, condition)
+            os.chdir('/home/melissa/Results/test_1')
+            merged_power_file_1 = pd.concat(small_dfs_one_brainstate, axis=1)
+            merged_power_file_1.to_csv('seizures_baseline_1_file.csv')
     
