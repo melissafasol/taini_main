@@ -55,3 +55,18 @@ class SalinePrepare2Files(ETXPrepare2Files):
         self.end_dict_1B = animal_id + '_2B'
         self.brain_state_file = animal_id + '.pkl'
         self.files = []
+
+
+class PrepareETXSaline1File(PrepareFiles):
+    
+    def __init__(self, directory_path, animal_id, start_time_dict, channel_number):
+        super().__init__(directory_path, animal_id)
+        self.start_1 = animal_id + '.pkl'
+        self.start_time_dict = start_time_dict
+        self.start_dict_1 = animal_id + '_1'
+        self.channel_number = channel_number
+        
+    def load_one_file(self, recording):
+        start_time_1 = self.start_time_dict[self.start_dict_1]
+        data = recording[self.channel_number, start_time_1:]
+        return data
