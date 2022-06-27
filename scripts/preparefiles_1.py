@@ -39,7 +39,7 @@ class PrepareFiles:
     def get_one_start_time(self, start_times_dict):
         start_time_1 = start_times_dict[self.start_dict_1]
         start_time_2 = None
-        return start_time_1
+        return start_time_1, start_time_2
 
     def get_two_start_times(self, start_times_dict):
         start_time_1 = start_times_dict[self.start_dict_1]
@@ -63,6 +63,11 @@ class LoadFromStart:
         data_1 = self.recording[self.channelnumber, self.start_time_1:]
         data_2 = self.recording[self.channelnumber, self.start_time_2:]
         return (data_1, data_2)
+
+
+#inheritance classes
+
+
 
 #check classes work
 #directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
