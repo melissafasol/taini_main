@@ -16,7 +16,7 @@ import itertools
 'this function calculates psd via Welch method on data with noise artifacts removed'
 
 def psd_per_channel(data_without_noise):
-
+ 
     welch_channel = []
     for data_array in data_without_noise:
         welch_channel.append(scipy.signal.welch(data_array, fs=250.4, window='hann', nperseg=1252))
