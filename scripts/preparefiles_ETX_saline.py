@@ -1,3 +1,9 @@
+import os 
+import numpy as np
+import pandas as pd
+
+from preparefiles_1 import PrepareFiles
+
 class ETXPrepare2Files:
     
     '''class for two ETX files, if only one file then just use parent prepare file'''

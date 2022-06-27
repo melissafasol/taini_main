@@ -1,7 +1,9 @@
+import scipy
 from scipy.fft import fft, fftfreq
 from scipy import signal
 
 '''apply scipy butterworth bandpass filter and remove epochs with amplitudes larger than 3000mV'''
+
 class Filter:
     
     order = 3
