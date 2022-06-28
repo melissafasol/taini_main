@@ -1,8 +1,5 @@
-import os 
+import os
 import numpy as np
-import pandas as pd
-
-
 
 class ExtractBrainStateIndices:
 
@@ -48,7 +45,6 @@ class ExtractBrainStateIndices:
         function_timebins = lambda epoch_start, epoch_end: list(range(epoch_start, epoch_end, ExtractBrainStateIndices.epoch_length))
         
         timevalues_epochs = list(map(lambda x: function_timebins(x[0], x[1]), (zipped_timevalues)))
-        timevalues_array = np.hstack(timevalues_epochs)
-
+        timevalues_array = list(np.concatenate(timevalues_epochs).flat)
         return timevalues_array
 

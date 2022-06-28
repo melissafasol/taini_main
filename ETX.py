@@ -22,7 +22,7 @@ from filter_functions import hof_filter
 from spectral_slope import hof_psd_with_specslope_filter
 from ETX_functions import concatenate_ETX_data, one_numpy_ETX
 from scripts.constants import ETX_recording_dictionary, start_times_ETX
-from save_functions import average_power_df, hof_concatenate_and_save, save_spectral_slope_data, power_df, save_files, concatenate_files
+from scripts.save_functions import average_power_df, hof_concatenate_and_save, save_spectral_slope_data, power_df, save_files, concatenate_files
 
 #variables to change
 channel_number = [11] #[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
