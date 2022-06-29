@@ -49,4 +49,3 @@ def save_files(directory_name, concatenated_power_file, concatenated_slope_file,
     if brain_state_number == 4:
         concatenated_power_file.to_csv(str(condition)  + '_seizure_power.csv', index=True)
         concatenated_slope_file.to_csv(str(condition)  + '_seizure_slopeintercept.csv', index=True)
-
