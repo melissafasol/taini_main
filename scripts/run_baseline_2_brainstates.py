@@ -62,5 +62,5 @@ power_dataframe, spectral_slope_dataframe = concatenate_files(power_file_to_conc
 
 print(power_dataframe)
 
-save_directory = '/home/melissa/Results/classes_refactor'
+save_directory = '/home/melissa/Results/seizure_data'
 save_files(directory_name = save_directory, concatenated_power_file = power_dataframe, concatenated_slope_file = spectral_slope_dataframe, brain_state_number=brain_state_number, condition = 'baseline')
