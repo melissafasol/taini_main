@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from preparefiles_1 import PrepareFiles
+from preproc1_preparefiles import PrepareFiles
 
 class ETXPrepare2Files:
     
