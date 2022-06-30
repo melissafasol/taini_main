@@ -4,11 +4,11 @@ import pandas as pd
 from scipy import average, gradient
 
 from constants import start_times_baseline
-from preparefiles_1 import PrepareFiles, LoadFromStart
-from extractbrainstate_2 import ExtractBrainStateIndices
-from filter_3 import Filter
-from power_spectrum_analysis_4 import PowerSpectrum
-from power_spectrum_analysis_4 import RemoveNoisyEpochs
+from preproc1_preparefiles import PrepareFiles, LoadFromStart
+from preproc2_extractbrainstate import ExtractBrainStateIndices
+from preproc3_filter import Filter
+from preproc4_power_spectrum_analysis import PowerSpectrum
+from preproc4_power_spectrum_analysis import RemoveNoisyEpochs
 from save_functions import average_power_df, concatenate_files, power_df, save_files, spectral_slope_save
 
 directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
