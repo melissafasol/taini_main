@@ -4,12 +4,14 @@ import pandas as pd
 from scipy import average, gradient
 
 from constants import start_times_ETX
-from preparefiles_ETX_saline import ETXPrepare2Files, PrepareETXSaline1File
-from extractbrainstate_2 import ExtractBrainStateIndices
-from filter_3 import Filter
-from power_spectrum_analysis_4 import PowerSpectrum
-from power_spectrum_analysis_4 import RemoveNoisyEpochs
+from preproc1a_preparefiles_ETX_saline import ETXPrepare2Files, PrepareETXSaline1File
+from preproc2_extractbrainstate import ExtractBrainStateIndices
+from preproc3_filter import Filter
+from preproc4_power_spectrum_analysis import PowerSpectrum
+from preproc4_power_spectrum_analysis import RemoveNoisyEpochs
 from save_functions import average_power_df, concatenate_files, power_df, save_files, spectral_slope_save
+
+
 
 directory_path_ETX = '/home/melissa/preprocessing/reformatted_brainstates_ETX'
 two_brainstates = ['S7063','S7064', 'S7068', 'S7069', 'S7072', 'S7088', 'S7094', 'S7096']
