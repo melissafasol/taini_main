@@ -10,7 +10,6 @@ from constants import start_times_baseline
 from preproc2_extractbrainstate import ExtractBrainStateIndices
 from preproc3_filter import Filter
 
-os.chdir('/home/melissa/class_refactor/FractalDimension/baseline/REM')
 
 directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
 brain_state_number = 2
@@ -35,10 +34,12 @@ for animal in animal_one_brainstate_list:
         filtered_data = np.array(apply_filter.butter_bandpass())
         print('filtering complete')
         int_array = filtered_data.astype(int)
-        results_1 = [ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array]
-        results_array = np.logical_not(np.isnan(np.array(results_1)))
+        results_1 = np.array([ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array])
+        results_array = results_1[np.logical_not(np.isnan(np.array(results_1)))]
+        print(results_array)
         print('Fractal Dimension values calculated')
-        results_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': results_array})
+        results_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': (np.mean(results_array)).flatten()})
+        print(results_df)
         higuchi_df.append(results_df)
 
 concat_hfd = pd.concat(higuchi_df, axis = 0).drop_duplicates().reset_index(drop=True)
