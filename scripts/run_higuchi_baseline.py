@@ -36,10 +36,8 @@ for animal in animal_one_brainstate_list:
         int_array = filtered_data.astype(int)
         results_1 = np.array([ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array])
         results_array = results_1[np.logical_not(np.isnan(np.array(results_1)))]
-        print(results_array)
         print('Fractal Dimension values calculated')
         results_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': (np.mean(results_array)).flatten()})
-        print(results_df)
         higuchi_df.append(results_df)
 
 concat_hfd = pd.concat(higuchi_df, axis = 0).drop_duplicates().reset_index(drop=True)
