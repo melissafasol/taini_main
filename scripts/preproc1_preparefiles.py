@@ -29,7 +29,7 @@ class PrepareFiles:
         return recording, brain_state_1, brain_state_2
 
     def load_one_analysis_file(self):
-        animal_recording = [filename for filename in os.listdir(self.directory_path) if filename.startswith(self.animal_id)]
+        animal_recording = [filename for filename in os.listdir(self.directory_path) if filename.endswith('.npy')]
         os.chdir(self.directory_path)
         recording = np.load(animal_recording[0])
         brain_file_1 = [filename for filename in os.listdir(self.directory_path) if filename.endswith(self.start_1)]

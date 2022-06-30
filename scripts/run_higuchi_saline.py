@@ -40,8 +40,8 @@ for animal in animal_two:
        
 concat_hfd = pd.concat(hfd_df_two, axis = 0).drop_duplicates().reset_index(drop=True)
 
-os.chdir('/home/melissa/class_refactor/FractalDimension/saline')
-concat_hfd.to_csv(str(brain_state_number) + '_2br_saline_hfd.csv')
+#os.chdir('/home/melissa/class_refactor/FractalDimension/saline')
+#concat_hfd.to_csv(str(brain_state_number) + '_2br_saline_hfd.csv')
 
 hfd_df_one = []
 
@@ -55,7 +55,7 @@ for animal in animal_one:
         ETX_epoch_indices = ETX_extractbrainstates.load_brainstate_file()
         ETX_timevalues_array = ETX_extractbrainstates.get_data_indices(ETX_epoch_indices)
         ETX_filter = Filter(recording_from_start, ETX_timevalues_array)
-        filtered_data = ETX_filter.butter_bandpass()
+        filtered_data = np.array(ETX_filter.butter_bandpass())
         print('filtering complete')
         int_array = filtered_data.astype(int)
         results_1 = np.array([ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array])
