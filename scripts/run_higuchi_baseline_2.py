@@ -12,7 +12,7 @@ from preproc3_filter import Filter
 
 #test commands for baseline two animals 
 directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
-brain_state_number = 2
+brain_state_number = 1
 channel_number_list = [0,2,3,4,5,6,7,8,9,10,11,12,13,15]
 animal_two_brainstates = ['S7070', 'S7072', 'S7083', 'S7063','S7064', 'S7069', 'S7086', 'S7091']
 seizure_two_brainstates = ['S7063', 'S7064', 'S7069', 'S7072']
@@ -49,5 +49,5 @@ for animal in animal_two_brainstates:
 
 concat_hfd = pd.concat(higuchi_df, axis = 0).drop_duplicates().reset_index(drop=True)
 
-os.chdir('/home/melissa/class_refactor/FractalDimension/baseline/REM')
+os.chdir('/home/melissa/class_refactor/FractalDimension/baseline/nonREM')
 concat_hfd.to_csv(str(brain_state_number) + '_2br_baseline_hfd.csv')
