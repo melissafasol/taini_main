@@ -16,9 +16,10 @@ directory_path_saline = '/home/melissa/preprocessing/reformatted_brainstates_sal
 animal_two =  ['S7070', 'S7071', 'S7074', 'S7075']
 animal_one =  ['S7094', 'S7098', 'S7101','S7063', 'S7064', 'S7068', 'S7069','S7072', 'S7076', 'S7083', 'S7086', 'S7088', 'S7091', 'S7092', 'S7096']
 channel_number_list = [0,2,3,4,5,6,7,8,9,10,11,12,13,15]
-brain_state_number = 2
+brain_state_number = 1
 kmax_value = 75
 hfd_df_two = []
+perm_entr_two = []
 
 for animal in animal_two:
     for channel in channel_number_list:
@@ -32,18 +33,29 @@ for animal in animal_two:
         filtered_data_2 = np.array(saline_filter_2.butter_bandpass())
         print('filtering complete')
         int_array = filtered_data_2.astype(int)
-        results_1 = np.array([ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array])
-        results_array = results_1[np.logical_not(np.isnan(np.array(results_1)))]
+        results_hfd = np.array([ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array])
+        results_perm_entr = np.array([ant.perm_entropy(epoch) for epoch in int_array])
+        results_hfd_array = results_hfd[np.logical_not(np.isnan(np.array(results_hfd)))]
         print('Fractal Dimension values calculated')
-        results_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': (np.mean(results_array)).flatten()})
-        hfd_df_two.append(results_df)
+        results_perm_entr_array = results_perm_entr[np.logical_not(np.isnan(np.array(results_perm_entr)))]
+        print('Permutation Entropy values calculated')
+        results_hfd_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': (np.mean(results_hfd_array)).flatten()})
+        results_perm_entr_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'Entropy': (np.mean(results_hfd_array)).flatten()})
+        hfd_df_two.append(results_hfd_df)
+        perm_entr_two.append(results_perm_entr_df)
+
        
 concat_hfd = pd.concat(hfd_df_two, axis = 0).drop_duplicates().reset_index(drop=True)
+permutation_entr = pd.concat(perm_entr_two, axis = 0).drop_duplicates().reset_index(drop=True)
 
-#os.chdir('/home/melissa/class_refactor/FractalDimension/saline')
-#concat_hfd.to_csv(str(brain_state_number) + '_2br_saline_hfd.csv')
+os.chdir('/home/melissa/class_refactor/FractalDimension/saline')
+concat_hfd.to_csv(str(brain_state_number) + '_2br_saline_hfd.csv')
+
+os.chdir('/home/melissa/class_refactor/PermutationEntropy')
+permutation_entr.to_csv(str(brain_state_number) + '_2br_saline_perm_entr.csv')
 
 hfd_df_one = []
+perm_entr_one = []
 
 for animal in animal_one:
     for channel in channel_number_list:
@@ -61,10 +73,18 @@ for animal in animal_one:
         results_1 = np.array([ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array])
         results_array = results_1[np.logical_not(np.isnan(np.array(results_1)))]
         print('Fractal Dimension values calculated')
+        results_perm_entr = np.array([ant.perm_entropy(epoch) for epoch in int_array])
+        print('Permutation entropy values calculated')
         results_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': (np.mean(results_array)).flatten()})
+        results_perm_entr_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'Entropy': (np.mean(results_hfd_array)).flatten()})
         hfd_df_one.append(results_df)
+        perm_entr_one.append(results_perm_entr_df)
 
 concat_hfd = pd.concat(hfd_df_one, axis = 0).drop_duplicates().reset_index(drop=True)
+permutation_entr = pd.concat(perm_entr_one, axis = 0).drop_duplicates().reset_index(drop=True)
 
 os.chdir('/home/melissa/class_refactor/FractalDimension/saline')
 concat_hfd.to_csv(str(brain_state_number) + '_1br_saline_hfd.csv')
+
+os.chdir('/home/melissa/class_refactor/PermutationEntropy')
+permutation_entr.to_csv(str(brain_state_number) + '_1br_saline_perm_entr.csv')

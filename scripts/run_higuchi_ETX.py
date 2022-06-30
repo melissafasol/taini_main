@@ -19,6 +19,7 @@ channel_number_list = [0,2,3,4,5,6,7,8,9,10,11,12,13,15]
 brain_state_number = 2
 kmax_value = 75
 hfd_df_two = []
+perm_entr_two = []
 
 for animal in two_brainstates:
     for channel in channel_number_list:
@@ -33,17 +34,27 @@ for animal in two_brainstates:
         print('filtering complete')
         int_array = filtered_data_2.astype(int)
         results_1 = np.array([ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array])
-        results_array = results_1[np.logical_not(np.isnan(np.array(results_1)))]
+        results_perm_entr = np.array([ant.perm_entropy(epoch) for epoch in int_array])
+        results_hfd_array = results_1[np.logical_not(np.isnan(np.array(results_1)))]
+        results_perm_entr_array = results_1[np.logical_not(np.isnan(np.array(results_perm_entr)))]
         print('Fractal Dimension values calculated')
-        results_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': (np.mean(results_array)).flatten()})
-        hfd_df_two.append(results_df)
+        results_hfd_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': (np.mean(results_hfd_array)).flatten()})
+        results_perm_entr_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'Entropy': (np.mean(results_perm_entr_array)).flatten()})
+        hfd_df_two.append(results_hfd_df)
+        perm_entr_two.append(results_perm_entr_df)
+
        
 concat_hfd = pd.concat(hfd_df_two, axis = 0).drop_duplicates().reset_index(drop=True)
+concat_perm_entr = pd.concat(perm_entr_two, axis=0).drop_duplicates().reset_index(drop=True)
 
-os.chdir('/home/melissa/class_refactor/FractalDimension/ETX/REM')
+os.chdir('/home/melissa/class_refactor/FractalDimension')
 concat_hfd.to_csv(str(brain_state_number) + '_2br_ETX_hfd.csv')
 
+os.chdir('/home/melissa/class_refactor/PermutationEntropy')
+concat_perm_entr.to_csv(str(brain_state_number) + '2br_ETX_permentr.csv')
+
 hfd_df_one = []
+perm_entr_one = []
 
 for animal in one_brainstate:
     for channel in channel_number_list:
@@ -58,13 +69,22 @@ for animal in one_brainstate:
         filtered_data = ETX_filter.butter_bandpass()
         print('filtering complete')
         int_array = filtered_data.astype(int)
-        results_1 = np.array([ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array])
-        results_array = results_1[np.logical_not(np.isnan(np.array(results_1)))]
+        results_hfd = np.array([ant.higuchi_fd(epoch, kmax=kmax_value) for epoch in int_array])
+        results_perm_entr = np.array([ant.perm_entropy(epoch) for epoch in int_array])
+        results_hfd_array = results_hfd[np.logical_not(np.isnan(np.array(results_hfd)))]
         print('Fractal Dimension values calculated')
-        results_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': (np.mean(results_array)).flatten()})
+        results_perm_entr_array = results_perm_entr[np.logical_not(np.isnan(np.array(results_perm_entr)))]
+        print('Permutation Entropy values calculated')
+        results_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'HGF': (np.mean(results_hfd_array)).flatten()})
+        results_perm_entr_df = pd.DataFrame(data = {'Animal_ID': animal, 'Channel': channel, 'Brainstate': brain_state_number, 'Entropy': (np.mean(results_perm_entr_array)).flatten()})
         hfd_df_one.append(results_df)
+        perm_entr_one.append(results_perm_entr_df)
 
 concat_hfd = pd.concat(hfd_df_one, axis = 0).drop_duplicates().reset_index(drop=True)
+concat_perm_entr = pd.concat(perm_entr_one, axis = 0).drop_duplicates().reset_index(drop=True)
 
-os.chdir('/home/melissa/class_refactor/FractalDimension/ETX/REM')
+os.chdir('/home/melissa/class_refactor/FractalDimension')
 concat_hfd.to_csv(str(brain_state_number) + '_1br_ETX_hfd.csv')
+
+os.chdir('/home/melissa/class_refactor/PermutationEntropy')
+concat_perm_entr.to_csv(str(brain_state_number) + '_1br_ETX_permentr.csv')
