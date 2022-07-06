@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 from scipy import average, gradient
 
-from constants import start_times_baseline
+from S7096 import concatenate_S7096
+from constants import start_times_baseline, start_times_S7096_baseline
 from preproc1_preparefiles import PrepareFiles, LoadFromStart
 from preproc2_extractbrainstate import ExtractBrainStateIndices
 from preproc3_filter import Filter
@@ -15,7 +16,7 @@ from save_functions import average_power_df, concatenate_files, power_df, save_f
 directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
 brain_state_number = 4
 channel_number_list = [0,2,3,4,5,6,7,8,9,10,11,12,13,15]
-animal_two_brainstates = ['S7070', 'S7072', 'S7083', 'S7063','S7064', 'S7069', 'S7086', 'S7091']
+animal_two_brainstates = ['S7096', 'S7070', 'S7072', 'S7083', 'S7063','S7064', 'S7069', 'S7086', 'S7091']
 seizure_two_brainstates = ['S7063', 'S7064', 'S7069', 'S7072']
 power_two_brainstate_df = []
 spectral_slope_two_brainstate_df = [] 

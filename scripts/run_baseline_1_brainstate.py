@@ -14,7 +14,7 @@ from save_functions import average_power_df, concatenate_files, power_df, save_f
 directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
 brain_state_number = 1
 channel_number_list = [0,2,3,4,5,6,7,8,9,10,11,12,13,15]
-animal_one_brainstate_list = ['S7098', 'S7068', 'S7074','S7076', 'S7071', 'S7075','S7087', 'S7088', 'S7092', 'S7094', 'S7101']
+animal_one_brainstate_list = ['S7096', 'S7098', 'S7068', 'S7074','S7076', 'S7071', 'S7075','S7087', 'S7088', 'S7092', 'S7094', 'S7101']
 seizure_one_brainstate = ['S7075', 'S7092', 'S7094', 'S7074', 'S7068']
 power_data_list = []
 spectral_slope_df = []
