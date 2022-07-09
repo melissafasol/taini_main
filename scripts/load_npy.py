@@ -23,7 +23,8 @@ path_to_folder = '/home/melissa/preprocessing/GRIN2B/GRIN2B_EEG'
 downsampling = 1
 montage_name = '/home/melissa/taini_main/scripts/standard_16grid_taini1.elc'
 number_electrodes = 16
-
+path_to_save_folder = 'home/melissa/preprocessing/GRIN2B/GRIN2B_numpy_format'
+save_as_name = 'change to file name to save as'
 
 '''load a .dat file by interpreting it as int16 and then de-interlacing the 16 channels'''
 def parse_dat(filename, number_of_channels = number_electrodes, sample_rate = 1000):
@@ -42,9 +43,13 @@ def parse_dat(filename, number_of_channels = number_electrodes, sample_rate = 10
 
     return dat_chans, t
 
-def convert_dat_to_npy(file_route, downsampling, sample_rate = 1000, number_electrodes = number_electrodes):
+def convert_dat_to_npy(file_route = path_to_folder, sample_rate = 1000, number_electrodes = number_electrodes, save_as_name = save_as_name):
 
     dat_chans, t = parse_dat(file_route, number_electrodes, sample_rate)
-    data = np.array(dat_chans)
+    data_to_save = np.array(dat_chans)
     
-    return data
+    os.chdir(path_to_save_folder)
+    np.save(save_as_name, data_to_save)
+
+    return data_to_save
+

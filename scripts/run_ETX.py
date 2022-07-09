@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from scipy import average, gradient
 
-from constants import start_times_ETX
+from scripts.SYNGAP_constants import start_times_ETX
 from preproc1a_preparefiles_ETX_saline import ETXPrepare2Files, PrepareETXSaline1File
 from preproc2_extractbrainstate import ExtractBrainStateIndices
 from preproc3_filter import Filter

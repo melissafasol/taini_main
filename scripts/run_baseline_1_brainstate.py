@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from scipy import average, gradient
 
-from constants import start_times_baseline
+from scripts.SYNGAP_constants import start_times_baseline
 from preproc1_preparefiles import PrepareFiles, LoadFromStart
 from preproc2_extractbrainstate import ExtractBrainStateIndices
 from preproc3_filter import Filter

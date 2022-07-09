@@ -6,7 +6,7 @@ from builtins import classmethod
 import os 
 import numpy as np
 import pandas as pd
-from constants import start_times_baseline
+from scripts.SYNGAP_constants import start_times_baseline
 
 class PrepareFiles:
     
