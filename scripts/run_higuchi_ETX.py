@@ -15,8 +15,9 @@ from preproc3_filter import Filter
 directory_path_ETX = '/home/melissa/preprocessing/reformatted_brainstates_ETX'
 two_brainstates = ['S7063','S7064', 'S7068', 'S7069', 'S7072', 'S7088', 'S7094', 'S7096']
 one_brainstate = ['S7070', 'S7071', 'S7075', 'S7076', 'S7083', 'S7086', 'S7087','S7092', 'S7098', 'S7101', 'S7074', 'S7091']
-seizure_two_numpy_file =  ['S7088', 'S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7094', 'S7096'] #S7088 
+seizure_two_numpy_file =  ['S7063', 'S7064', 'S7068', 'S7069', 'S7072', 'S7094', 'S7096'] #S7088 
 seizure_one_numpy_file = ['S7074', 'S7075', 'S7076', 'S7092']
+
 channel_number_list = [0,2,3,4,5,6,7,8,9,10,11,12,13,15]
 brain_state_number = 4
 kmax_value = 75

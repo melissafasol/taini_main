@@ -20,6 +20,7 @@ animal_two_brainstates = ['S7096', 'S7070', 'S7072', 'S7083', 'S7063','S7064', '
 seizure_two_brainstates = ['S7063', 'S7064', 'S7069', 'S7072']
 power_two_brainstate_df = []
 spectral_slope_two_brainstate_df = [] 
+
 for animal in seizure_two_brainstates:
     test_prepare_2 = PrepareFiles(directory_path=directory_path, animal_id=animal)
     recording, brain_state_1, brain_state_2 = test_prepare_2.load_two_analysis_files()
