@@ -12,13 +12,13 @@ from preproc4_power_spectrum_analysis import RemoveNoisyEpochs
 from save_functions import average_power_df, concatenate_files, power_df, save_files, spectral_slope_save
 
 directory_path = '/home/melissa/preprocessing/numpyformat_baseline'
-brain_state_number = 1
+brain_state_number = 4
 channel_number_list = [0,2,3,4,5,6,7,8,9,10,11,12,13,15]
-animal_one_brainstate_list = ['S7098', 'S7068', 'S7074','S7076', 'S7071', 'S7075','S7087', 'S7088', 'S7092', 'S7094', 'S7101']
+animal_one_brainstate_list = ['S7096', 'S7098', 'S7068', 'S7074','S7076', 'S7071', 'S7075','S7087', 'S7088', 'S7092', 'S7094', 'S7101']
 seizure_one_brainstate = ['S7075', 'S7092', 'S7094', 'S7074', 'S7068']
 power_data_list = []
 spectral_slope_df = []
-for animal in animal_one_brainstate_list:
+for animal in seizure_one_brainstate:
     prepare_files = PrepareFiles(directory_path=directory_path, animal_id = animal)
     recording, brain_state_1 = prepare_files.load_one_analysis_file()
     start_time_1, start_time_2 = prepare_files.get_one_start_time(start_times_baseline)
@@ -46,5 +46,5 @@ for animal in animal_one_brainstate_list:
 
 power_dataframe, spectral_slope_dataframe = concatenate_files(power_file_to_concatenate=power_data_list, gradient_intercept_to_concatenate= spectral_slope_df)
 
-save_directory = '/home/melissa/Results/rem'
+save_directory = '/home/melissa/class_refactor/seizure_power'
 save_files(directory_name = save_directory, concatenated_power_file = power_dataframe, concatenated_slope_file = spectral_slope_dataframe, brain_state_number=brain_state_number, condition = 'baseline_1br_')

@@ -1,0 +1,38 @@
+# Taini EEG 16 electrode file
+ReferenceLabel	avg
+UnitPosition	mm
+NumberPositions=	16
+Positions
+5	2	0
+4	5	0
+4	4	0
+5	4	0
+5	1	0
+5	0	0
+5	3	0
+1	0	0
+1	1	0
+1	3	0
+1	4	0
+2	4	0
+2	5	0
+0	0	0
+1	2	0
+0	0	0
+Labels
+S1Tr_RIGHT
+M2_FrA_RIGHT
+M2_ant_RIGHT
+M1_ant_RIGHT
+V2ML_RIGHT
+V1M_RIGHT
+S1HL_S1FL_RIGHT
+V1M_LEFT
+V2ML_LEFT
+S1HL_S1FL_LEFT
+M1_ant_LEFT
+M2_ant_LEFT
+M2_FrA_LEFT
+S1Tr_LEFT
+EMG_RIGHT
+EMG_LEFT

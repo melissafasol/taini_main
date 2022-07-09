@@ -15,13 +15,15 @@ from preproc3_filter import Filter
 directory_path_saline = '/home/melissa/preprocessing/reformatted_brainstates_saline'
 animal_two =  ['S7070', 'S7071', 'S7074', 'S7075']
 animal_one =  ['S7094', 'S7098', 'S7101','S7063', 'S7064', 'S7068', 'S7069','S7072', 'S7076', 'S7083', 'S7086', 'S7088', 'S7091', 'S7092', 'S7096']
+seizure_two_numpy_file = ['S7074', 'S7075']
+seizure_one_numpy_file = ['S7063', 'S7064', 'S7068', 'S7069', 'S7072','S7088', 'S7092', 'S7094', 'S7096']
 channel_number_list = [0,2,3,4,5,6,7,8,9,10,11,12,13,15]
-brain_state_number = 1
+brain_state_number = 4
 kmax_value = 75
 hfd_df_two = []
 perm_entr_two = []
 
-for animal in animal_two:
+for animal in seizure_two_numpy_file:
     for channel in channel_number_list:
         saline_prepare = SalinePrepare2Files(directory_path = directory_path_saline, animal_id = animal, start_time_dict = start_times_saline, channel_number = channel)
         concatenate_recordings_saline, concatenated_data_brain_state_saline = saline_prepare.load_ETX_two()
@@ -57,7 +59,7 @@ permutation_entr.to_csv(str(brain_state_number) + '_2br_saline_perm_entr.csv')
 hfd_df_one = []
 perm_entr_one = []
 
-for animal in animal_one:
+for animal in seizure_one_numpy_file:
     for channel in channel_number_list:
         ETX_prepare_1 = PrepareETXSaline1File(directory_path = directory_path_saline, animal_id = animal, start_time_dict = start_times_saline, channel_number = channel)
         recording_1, brain_state_1 = ETX_prepare_1.load_one_analysis_file()
