@@ -4,7 +4,7 @@ import pandas as pd
 from scipy import average, gradient
 
 from S7096 import concatenate_S7096
-from constants import start_times_baseline, start_times_S7096_baseline
+from scripts.SYNGAP_constants import start_times_baseline, start_times_S7096_baseline
 from preproc1_preparefiles import PrepareFiles, LoadFromStart
 from preproc2_extractbrainstate import ExtractBrainStateIndices
 from preproc3_filter import Filter

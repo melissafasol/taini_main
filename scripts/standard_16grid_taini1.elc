@@ -4,6 +4,7 @@ UnitPosition	mm
 NumberPositions=	16
 Positions
 5	2	0
+1	2	0
 4	5	0
 4	4	0
 5	4	0
@@ -17,7 +18,6 @@ Positions
 2	4	0
 2	5	0
 0	0	0
-1	2	0
 0	0	0
 Labels
 S1Tr_RIGHT

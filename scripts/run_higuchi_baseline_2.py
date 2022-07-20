@@ -6,7 +6,7 @@ import stochastic.processes.noise as sn
 import os
 
 from preproc1_preparefiles import PrepareFiles, LoadFromStart
-from constants import start_times_baseline
+from scripts.SYNGAP_constants import start_times_baseline
 from preproc2_extractbrainstate import ExtractBrainStateIndices
 from preproc3_filter import Filter
 

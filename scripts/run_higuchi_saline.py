@@ -5,7 +5,7 @@ from scipy import average, gradient
 import antropy as ant
 import os
 
-from constants import start_times_saline
+from scripts.SYNGAP_constants import start_times_saline
 from preproc1a_preparefiles_ETX_saline import PrepareETXSaline1File, SalinePrepare2Files
 from preproc2_extractbrainstate import ExtractBrainStateIndices
 from preproc3_filter import Filter
