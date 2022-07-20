@@ -5,19 +5,6 @@ import mne
 import glob 
 from GRIN2B_constants import animal_ID_list
 
-#path to .dat file 
-#path to montage 
-
-#load brainstate file 
-#delete first column and add 0-5
-
-##variables that change every recording
-filename = 'example.dat'
-animal_id = 'S7087'
-baseline = 2
-first_sample = 100000 #sample start time 
-sampling_rate = 250.4
-
 #variables that change but not often 
 path_to_folder = '/home/melissa/preprocessing/GRIN2B/GRIN2B_dat'
 downsampling = 1
@@ -53,11 +40,6 @@ def convert_dat_to_npy(filename, path_to_folder, path_to_save_folder, sample_rat
     np.save(save_as_name, data_to_save)
 
     print('data saved for ' + save_as_name)
-
-
-#test_file_name = 'TAINI_1045_D_Grin2B_402-2022_05_03-0000.dat'
-#convert_dat_to_npy(filename = test_file_name, path_to_folder = path_to_folder, path_to_save_folder = path_to_save_folder, sample_rate=1000, #number_electrodes= 16, save_as_name='test_1045_GRIN2B')
-
 
 
 for animal in animal_ID_list:
